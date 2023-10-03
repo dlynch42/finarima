@@ -1,6 +1,6 @@
 import { HardHat } from "lucide-react";
 
-const SettingsPage = () => {
+const GarchPage = () => {
     return (
         <div className="h-screen flex justify-center items-center">
             <div className="w-full h-full grid grid-cols-3 gap-4 content-center">
@@ -21,4 +21,4 @@ const SettingsPage = () => {
     )
 }
 
-export default SettingsPage;
+export default GarchPage;
