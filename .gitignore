@@ -2,9 +2,10 @@
 
 # Manual
 *.csv
-venv/
+/venv
 todo.txt
 .env
+/data
 
 # dependencies
 /node_modules
