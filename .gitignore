@@ -2,6 +2,7 @@
 
 # Manual
 *.csv
+venv/
 
 # dependencies
 /node_modules
