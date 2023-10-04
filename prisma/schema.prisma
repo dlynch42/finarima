@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Securities {
+  symbol                      String @id @unique
+  name                        String
+}
+
+model Stats {
+  symbol                      String @id
+  date                        DateTime
+  model                       String
+  log_likelihood              Float
+  aic                         Float
+  bic                         Float
+  sample                      Int
+  hqic                        Float
+  sigma2                      Float
+  ljung_box                   Float
+  jarque_bera                 Float
+  prob_q                      Float
+  h                           Float
+  skew                        Float
+  prob_h                      Float
+  kurtosis                    Float
+}
+
+model Adf {
+  symbol                      String @id
+  test                        String
+  date                        DateTime
+  test_stat                   Float
+  pvalue                      Float
+  lags                        Int
+  obs                         Int
+  hypothesis                  String
+}

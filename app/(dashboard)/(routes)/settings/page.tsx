@@ -7,3 +7,5 @@ const SettingsPage = () => {
 }
 
 export default SettingsPage;
+
+// Add dark and light mode

@@ -4,6 +4,7 @@
 *.csv
 venv/
 todo.txt
+.env
 
 # dependencies
 /node_modules
@@ -38,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Python
+__pycache__
