@@ -327,4 +327,5 @@ class Arima():
                 extracted_data[key] = match.group(1)
                 
         return extracted_data
+    
 # Add more models below 
