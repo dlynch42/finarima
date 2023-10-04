@@ -6,6 +6,7 @@
 todo.txt
 .env
 /data
+*.png
 
 # dependencies
 /node_modules

@@ -37,7 +37,8 @@ class Arima():
         self.forecasted_df = self.forecast(self.df, self.forecast_timeframe)
         
         # TODO : Load into Prisma
-                
+
+    # Setups
     def setup(self, ticker):
         # Get stock data
         stock = yf.Ticker(ticker).history(period="10y")
@@ -123,6 +124,8 @@ class Arima():
     # Plots
     def plot_forecast(self):
         # Plot
+        plt.figure()
+        
         self.forecasted_df.set_index('Date', inplace=True)
         self.forecasted_df[['Close', 'Forecast']].plot(figsize=(12, 8))
 
@@ -149,11 +152,11 @@ class Arima():
         plt.ylabel('Price ($)')
         plt.title(f'Forecasted Price of {self.ticker}')
         
-        img = plt.savefig(f'{self.ticker}_{self.now}_arima_forecast.png', bbox_inches='tight')
+        forecast = f'public/plots/forecast/{self.ticker}_{self.now}_arima_forecast.png'
+        plt.savefig(forecast, bbox_inches='tight')
+        plt.close()  # Close the current figure
         
-        plt.ioff()
-        
-        return img
+        return forecast
     
     def plot_timeseries(self):
         # Create rolling mean
@@ -175,6 +178,9 @@ class Arima():
         '''
         Plot the first difference, second difference, seasonal difference, and seasonal first difference.
         '''
+        # Create a separate figure for each plot
+        plt.figure()
+        
         # First difference, change from one period to the next
         self.df[self.FD] = self.df['Close'].dropna() - self.df['Close'].dropna().shift(1)
         
@@ -182,32 +188,49 @@ class Arima():
         self.df[self.FD].dropna().plot()
         plt.title(self.FD)
         plt.xlabel('Date')
-        plt.show()
-
-        # Second 
+        fd = f'public/plots/diff/{self.ticker}_{self.now}_arima_{self.FD.lower()}.png'
+        plt.savefig(fd, bbox_inches='tight')
+        plt.close()  # Close the current figure
+        
+        # Create a new figure for the second difference
+        plt.figure()
+        
+        # Second Difference
         self.df[self.SECD] = self.df[self.FD].dropna() - self.df[self.FD].dropna().shift(1)
         
         # Plot Second Difference
         self.df[self.SECD].dropna().plot()
         plt.title(self.SECD)
         plt.xlabel('Date')
-        plt.show()
+        secd = f'public/plots/diff/{self.ticker}_{self.now}_arima_{self.SECD.lower()}.png'
+        plt.savefig(secd, bbox_inches='tight')
+        plt.close()  # Close the current figure
         
         # Seasonal
+        plt.figure()
         self.df[self.SD] = self.df['Close'].dropna() - self.df['Close'].dropna().shift(30)
         self.df[self.SD].dropna().plot()
         
         plt.title(self.SD)
         plt.xlabel('Date')
-        plt.show()
+        
+        sd = f'public/plots/diff/{self.ticker}_{self.now}_arima_{self.SD.lower()}.png'
+        plt.savefig(sd, bbox_inches='tight')
+        plt.close()  # Close the current figure
         
         # Seasonal First Difference
+        plt.figure()
         self.df[self.SFD] = self.df[self.FD] - self.df[self.FD].shift(30)
         self.df[self.SFD].plot()
         
         plt.title(self.SFD)
         plt.xlabel('Date')
-        plt.show()
+        
+        sfd = f'public/plots/diff/{self.ticker}_{self.now}_arima_{self.SFD.lower()}.png'
+        plt.savefig(sfd, bbox_inches='tight')
+        plt.close()  # Close the current figure
+        
+        return fd, secd, sd, sfd
     
     def plot_resid(self):
         self.results.resid.plot()
@@ -329,3 +352,7 @@ class Arima():
         return extracted_data
     
 # Add more models below 
+if __name__ == '__main__':
+    stock = Arima('NG=F')
+    forecast = stock.plot_forecast()
+    print(forecast)

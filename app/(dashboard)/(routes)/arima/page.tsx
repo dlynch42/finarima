@@ -2,12 +2,10 @@
 
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
+import Image from 'next/image';
 import { set } from "react-hook-form";
 
 const ArimaPage = () => {
-
-    // const [message, setMessage] = useState("Loading"); // get message
-    // const [people, setPeople] = useState([]); // get people
 
     const [ticker, setTicker] = useState<string>(); // ("Loading...") get ticker
     const [forecast, setForecast] = useState(); // get forecast
@@ -19,28 +17,30 @@ const ArimaPage = () => {
         fetch('http://localhost:8080/api/arima')
         .then((response => response.json()))
         .then((data) => {
-            // message = 'loading'
-            // once data is returned, 
-            // set message to data.message
-            // setMessage(data.message);
             setTicker(data.ticker);
             setSummary(data.summary);
-            // setForecast(data.plot_forecast);
+            setForecast(data.forecast);
             setAdf(data.adf);
-            // console.log(data.people);
         });
     }, []);
 
     return (
         <div>
             <div>
+                <h1>ARIMA</h1>
+                <p>ARIMA is a forecasting model that uses past data to predict future values.</p>
+            </div>
+            <div>
                 Input
-                {/* <Input /> */}
+                <Input />
             </div>
             <div>
                 Results
                 <div>{ticker}</div>
-                <div>{/* <img src="{{ plot }}" alt='Forecast Plot' /> */}</div>
+                <div>
+                    {/* const escapedForecast = forecast?.replace(/'/g, '&apos;'); */}
+                    <Image src={forecast?.url} alt='Forecast Plot' width={forecast?.width} height={forecast?.height} />
+                </div>
                 <div>{summary}</div>
                 <div>{adf}</div>
             </div>
