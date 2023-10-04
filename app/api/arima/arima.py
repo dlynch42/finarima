@@ -25,8 +25,6 @@ class Arima():
         
         df = self.forecast(df, results)
         
-        # return df
-        
     def setup(self, ticker, options: bool = False):
         # Get stock data
         stock = yf.Ticker(ticker).history(period="10y")
@@ -156,9 +154,6 @@ class Arima():
             autocorrelation_plot(df['Seasonal First Difference'].dropna())
             result = plot_pacf(df['Seasonal First Difference'].dropna())
             plot_pacf(df['Seasonal First Difference'].dropna())
-            
-        if show == False:
-            pass
     
     def model(self, df, show: bool = False, options: bool = False):
         # Need frequency for SARIMA model
@@ -186,7 +181,7 @@ class Arima():
         
         # Forecast Length
         start = len(df)
-        end = round(len(df) + 252)  # TODO: Make dynamic
+        end = round(len(df) + 252)  # TODO Make dynamic
         
         # Forecasting Current
         df['forecast'] = results.predict(start=start, end=end)
@@ -196,7 +191,7 @@ class Arima():
         # Create a CustomBusinessDay object to exclude weekends and holidays
         us_bd = CustomBusinessDay(calendar=USFederalHolidayCalendar())
         # Create future dates
-        future_dates = pd.date_range(start_date, periods=252, freq=us_bd).strftime('%Y-%m-%d')  # TODO: Make dynamic period
+        future_dates = pd.date_range(start_date, periods=252, freq=us_bd).strftime('%Y-%m-%d')  # TODO Make dynamic period
         
         df.set_index('Date', inplace=True)
 
@@ -245,4 +240,4 @@ class Arima():
 if __name__ == "__main__":
     ticker = 'NG=F'
     data = Arima(ticker)
-    data.plot_forecast(data) # FIXME: Not working
+    data.plot_forecast(data) # FIXME Not working
