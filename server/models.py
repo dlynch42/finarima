@@ -36,7 +36,7 @@ class Arima():
         self.df, self.results = self.model(self.df)
         self.forecasted_df = self.forecast(self.df, self.forecast_timeframe)
         
-        # Load into Prisma
+        # TODO : Load into Prisma
                 
     def setup(self, ticker):
         # Get stock data
@@ -171,7 +171,7 @@ class Arima():
         decomp = seasonal_decompose(self.time_series, period=12)
         decomp.plot()
     
-    def plot_diff(self): # TODO instead of plotting, return as images
+    def plot_diff(self): # TODO : instead of plotting, return as images
         '''
         Plot the first difference, second difference, seasonal difference, and seasonal first difference.
         '''
