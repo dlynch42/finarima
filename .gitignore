@@ -3,6 +3,7 @@
 # Manual
 *.csv
 venv/
+todo.txt
 
 # dependencies
 /node_modules

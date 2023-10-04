@@ -245,4 +245,4 @@ class Arima():
 if __name__ == "__main__":
     ticker = 'NG=F'
     data = Arima(ticker)
-    data.plot_forecast(data)
+    data.plot_forecast(data) # FIXME: Not working
