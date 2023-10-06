@@ -1,7 +1,8 @@
 import json
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from components import get_image_dimensions
+import pandas as pd
+import warnings
 import threading
 import os
 
@@ -18,13 +19,16 @@ def return_arima():
         ticker = request_data.get('messages', [])[-1].upper() #.get('newMessages', [])
         print(f"Received user message: {ticker}", sep='\n')
     
-    # stock = Arima(ticker)
+    stock = Arima(ticker)
     # forecast = stock.plot_forecast()
     # print('forecast: ', forecast)
     
-    # summary = stock.summ()
+    summary = stock.summ().to_dict()
     # adf = stock.adf()
-    # adf_fd, adf_secd, adf_sd, adf_sfd = stock.adf()
+    
+    adf_fd, adf_secd, adf_sd, adf_sfd = stock.adf()
+    # adf_fd, adf_secd, adf_sd, adf_sfd = adf_fd.to_dict(), adf_secd.to_dict(), adf_sd.to_dict(), adf_sfd.to_dict()
+
     # ts = stock.plot_timeseries()
     # diff = stock.plot_diff()
     # resid = stock.plot_resid()
@@ -37,13 +41,13 @@ def return_arima():
         # 'forecast': forecast,
         
         # Stats
-        # 'summary': summary,
-        # 'adf': {
-        #     'fd': adf_fd, 
-        #     'secd': adf_secd, 
-        #     'sd': adf_sd, 
-        #     'sfd': adf_sfd
-        # }
+        'summary': summary,
+        'adf': {
+            'fd': adf_fd, 
+            'secd': adf_secd, 
+            'sd': adf_sd, 
+            'sfd': adf_sfd
+        }
         
         # Optional fields
         # 'ts': ts,

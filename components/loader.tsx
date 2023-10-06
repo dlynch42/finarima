@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { RotateCw } from 'lucide-react';
 
 export const Loader = () => {

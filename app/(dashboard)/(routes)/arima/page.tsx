@@ -171,21 +171,21 @@ const ArimaPage = () => {
                                         </CardFooter>
                                     </Card>
                                 ))}
-                            </div>
+                            </div> */}
                             <p className="text-sm text-muted-foreground">
                                 {summary && (
                                     <ul>
-                                        {Object.entries(summary.data).map(([stat, value]) => (
-                                            <li key={stat}>
-                                                {stat}: {value}
-                                            </li>
-                                        ))}
+                                    {Object.entries(summary).map(([stat, value]) => (
+                                        <li key={stat}>
+                                        {stat}: {value}
+                                        </li>
+                                    ))}
                                     </ul>
                                 )}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                            {adf && (
-                                <>
+                                {adf && (
+                                    <>
                                     ADF FD: {adf.fd}
                                     <br />
                                     ADF SECD: {adf.secd}
@@ -193,9 +193,9 @@ const ArimaPage = () => {
                                     ADF SD: {adf.sd}
                                     <br />
                                     ADF SFD: {adf.sfd}
-                                </>
-                            )}
-                            </p> */}
+                                    </>
+                                )}
+                            </p>
                         </div>
                     </div>
                 </div>
