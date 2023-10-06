@@ -1,4 +1,5 @@
-from flask import Flask, jsonify
+import json
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from components import get_image_dimensions
 import threading
@@ -9,61 +10,51 @@ from models import Arima
 app = Flask(__name__)
 CORS(app)
 
-ticker = 'NG=F'
-
-@app.route('/api/arima', methods=['GET'])
+@app.route('/api/arima', methods=['POST'])
 def return_arima():
+    if request.method == 'POST':
+        # Parse the JSON data
+        request_data = json.loads(request.data)
+        ticker = request_data.get('messages', [])[-1].upper() #.get('newMessages', [])
+        print(f"Received user message: {ticker}", sep='\n')
     
-    stock = Arima(ticker)
-    # Call stock.plot_forecast in the main thread and save the image to a file
-    # forecast = './plots/forecast/NG=F_2023-10-04_arima_forecast.png'
-    forecast = stock.plot_forecast()
-    print(forecast)
+    # stock = Arima(ticker)
+    # forecast = stock.plot_forecast()
+    # print('forecast: ', forecast)
     
-    # if os.path.exists(forecast):
-    #     # Get the image dimensions
-    #     forw, forh = get_image_dimensions(forecast)
-    #     print(forw, forh, sep='\n')
+    # summary = stock.summ()
+    # adf = stock.adf()
+    # adf_fd, adf_secd, adf_sd, adf_sfd = stock.adf()
+    # ts = stock.plot_timeseries()
+    # diff = stock.plot_diff()
+    # resid = stock.plot_resid()
+    # acf = stock.plot_autocorrelation()
+
+    # Get the image dimensions from the saved file    
+    data = {
+        # Mandatory fields
+        'ticker': ticker,
+        # 'forecast': forecast,
         
-    #     data = {
-    #         'ticker': f'{ticker}',
-    #         'summary': f'{stock.summ()}',
-    #         'adf': f'{stock.adf()}',
-    #         'forecast': {
-    #             'url': f'{forecast}', 
-    #             'width': forw,
-    #             'height': forh
-    #         }
-    #     }
+        # Stats
+        # 'summary': summary,
+        # 'adf': {
+        #     'fd': adf_fd, 
+        #     'secd': adf_secd, 
+        #     'sd': adf_sd, 
+        #     'sfd': adf_sfd
+        # }
         
-    #     return jsonify(data), 200
+        # Optional fields
+        # 'ts': ts,
+        # 'diff': diff,
+        # 'resid': resid,
+        # 'acf': acf,
+    }
     
-    # else:
-    #     e = f"Image file '{forecast}' does not exist."
-    #     print(e)
-    #     return jsonify({
-    #         'message': e
-    #         }), 500
+    print(data)
     
-    
-    
-    
-    # # Get the image dimensions from the saved file
-    # forw, forh = get_image_dimensions(forecast)
-    # print(forw, forh, sep='\n')
-    
-    # data = {
-    #     'ticker': f'{ticker}',
-    #     'summary': f'{stock.summ()}',
-    #     'adf': f'{stock.adf()}',
-    #     'forecast': {
-    #         'url': f'{forecast}', 
-    #         'width': forw,
-    #         'height': forh
-    #     }
-    # }
-    
-    # return jsonify(data), 200
+    return jsonify(data), 200
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080)

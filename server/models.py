@@ -8,6 +8,8 @@ from statsmodels.tsa.arima_model import ARIMA
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.seasonal import seasonal_decompose
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import yfinance as yf
 import warnings
@@ -158,7 +160,7 @@ class Arima():
         
         return forecast
     
-    def plot_timeseries(self):
+    def plot_timeseries(self): # TODO : instead of plotting, return as images
         # Create rolling mean
         self.time_series.rolling(252).mean().plot(label='252 Day Rolling Mean')
         self.time_series.plot()
@@ -232,11 +234,11 @@ class Arima():
         
         return fd, secd, sd, sfd
     
-    def plot_resid(self):
+    def plot_resid(self): # TODO : instead of plotting, return as images
         self.results.resid.plot()
         self.results.resid.plot(kind='kde')
         
-    def plot_autocorrelation(self):
+    def plot_autocorrelation(self): # TODO : instead of plotting, return as images
         # Autocorrelation Plots
         plot_acf(self.df[self.FD].dropna())        
         plot_acf(self.df[self.SFD].dropna())
@@ -251,6 +253,8 @@ class Arima():
         summary = self.summ_stats()
         summary = pd.DataFrame.from_dict(summary, orient='index', columns=['Value'])
         summary.index.name = 'Stat'
+        
+        summary.to_dict(orient='split')
         
         return summary
 

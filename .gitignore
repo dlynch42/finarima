@@ -3,7 +3,7 @@
 # Manual
 *.csv
 /venv
-todo.txt
+scratch.txt
 .env
 /data
 *.png
