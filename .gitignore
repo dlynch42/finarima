@@ -7,6 +7,7 @@ scratch.txt
 .env
 /data
 *.png
+*.ipynb
 
 # dependencies
 /node_modules
