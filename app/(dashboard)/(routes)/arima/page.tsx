@@ -20,6 +20,36 @@ import { Empty } from "@/components/empty";
 import { cn } from "@/lib/utils";
 import { Card, CardFooter } from "@/components/ui/card";
 
+interface Summary {
+    Model: string;
+    "Log Likelihood": string;
+    Date: string;
+    AIC: string;
+    Time: string;
+    BIC: string;
+    Sample: string;
+    HQIC: string;
+    sigma2: string;
+    "Ljung-Box (L1) (Q)": string;
+    "Jarque-Bera (JB)": string;
+    "Prob(Q)": string;
+    "Heteroskedasticity (H)": string;
+    Skew: string;
+    "Prob(H) (two-sided)": string;
+    Kurtosis: string;
+}  
+
+interface Adf {
+    symbol: string;
+    test: string;
+    date: string;
+    test_stat: number;
+    pvalue: number;
+    lags: number;
+    obs: number;
+    hypothesis: string;
+  }
+
 const ArimaPage = () => {
     // Message State
     const [messages, setMessages] = useState<string[]>([]); // needs to be an array // TODO
@@ -27,9 +57,11 @@ const ArimaPage = () => {
     // Results
     const [ticker, setTicker] = useState<string | undefined>(undefined);
     const [forecast, setForecast] = useState<string | undefined>(undefined);
-    const [summary, setSummary] = useState<string | undefined>(undefined);
-    const [adf, setAdf] = useState<{ fd: string; secd: string; sd: string; sfd: string } | undefined>(undefined);
-
+    const [summary, setSummary] = useState<Summary | undefined>(undefined);
+    const [fd, setFd] = useState<Adf | undefined>(undefined);
+    const [secd, setSecd] = useState<Adf | undefined>(undefined);
+    const [sd, setSd] = useState<Adf | undefined>(undefined);
+    const [sfd, setSfd] = useState<Adf | undefined>(undefined);
 
     // Router
     const router = useRouter();
@@ -72,7 +104,10 @@ const ArimaPage = () => {
             setTicker(responseData.ticker);
             setSummary(responseData.summary);
             setForecast(responseData.forecast);
-            setAdf(responseData.adf);
+            setFd(responseData.fd);
+            setSecd(responseData.secd);
+            setSd(responseData.sd);
+            setSfd(responseData.sfd);
 
             form.reset(); // Reset the form
 
@@ -146,18 +181,20 @@ const ArimaPage = () => {
                             <h2 className="text-3xl font-bold">
                                 {ticker}
                             </h2>
-                            {/* <div>
-                                {messages.map((forecast) => (
+                            <div>
+                                {/* {messages.map((forecast) => ( */}
                                     <Card 
                                         key={forecast}
                                         className="rounded-lg overflow-hidden"
                                     >
                                         <div className="relative aspect-square">
-                                            <Image 
-                                                alt="Image"
-                                                fill
-                                                src={forecast}
-                                            />
+                                            {forecast && ( // Check if forecast is defined before rendering
+                                                <Image 
+                                                    alt="Image"
+                                                    fill
+                                                    src={forecast}
+                                                />
+                                            )}
                                         </div>
                                         <CardFooter className="p-2">
                                             <Button 
@@ -170,30 +207,28 @@ const ArimaPage = () => {
                                             </Button>
                                         </CardFooter>
                                     </Card>
-                                ))}
-                            </div> */}
+                                {/* ))} */}
+                            </div>
                             <p className="text-sm text-muted-foreground">
                                 {summary && (
                                     <ul>
-                                    {Object.entries(summary).map(([stat, value]) => (
-                                        <li key={stat}>
-                                        {stat}: {value}
-                                        </li>
-                                    ))}
+                                        <li>Model: {summary.Model}</li>
+                                        <li>Log Likelihood: {summary["Log Likelihood"]}</li>
+                                        <li>Date: {summary.Date}</li>
+                                        <li>AIC: {summary.AIC}</li>
+                                        <li>Time: {summary.Time}</li>
+                                        <li>BIC: {summary.BIC}</li>
+                                        <li>Sample: {summary.Sample}</li>
+                                        <li>HQIC: {summary.HQIC}</li>
+                                        <li>sigma2: {summary.sigma2}</li>
+                                        <li>Ljung-Box (L1) (Q): {summary["Ljung-Box (L1) (Q)"]}</li>
+                                        <li>Jarque-Bera (JB): {summary["Jarque-Bera (JB)"]}</li>
+                                        <li>Prob(Q): {summary["Prob(Q)"]}</li>
+                                        <li>Heteroskedasticity (H): {summary["Heteroskedasticity (H)"]}</li>
+                                        <li>Skew: {summary.Skew}</li>
+                                        <li>Prob(H) (two-sided): {summary["Prob(H) (two-sided)"]}</li>
+                                        <li>Kurtosis: {summary.Kurtosis}</li>
                                     </ul>
-                                )}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                                {adf && (
-                                    <>
-                                    ADF FD: {adf.fd}
-                                    <br />
-                                    ADF SECD: {adf.secd}
-                                    <br />
-                                    ADF SD: {adf.sd}
-                                    <br />
-                                    ADF SFD: {adf.sfd}
-                                    </>
                                 )}
                             </p>
                         </div>

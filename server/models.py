@@ -25,6 +25,7 @@ class Arima():
         self.SD = 'Seasonal Difference'
         self.SFD = 'Seasonal First Difference'
         self.now = datetime.datetime.now().strftime('%Y-%m-%d')
+        self.public = 'public'
         
         # Global Variables
         self.ticker = ticker
@@ -154,13 +155,15 @@ class Arima():
         plt.ylabel('Price ($)')
         plt.title(f'Forecasted Price of {self.ticker}')
         
-        forecast = f'public/plots/forecast/{self.ticker}_{self.now}_arima_forecast.png'
-        plt.savefig(forecast, bbox_inches='tight')
+        forecast = f'/plots/forecast/{self.ticker}_{self.now}_arima_forecast.png'
+        plt.savefig(self.public + forecast, bbox_inches='tight')
         plt.close()  # Close the current figure
         
         return forecast
     
     def plot_timeseries(self): # TODO : instead of plotting, return as images
+        plt.figure()
+        
         # Create rolling mean
         self.time_series.rolling(252).mean().plot(label='252 Day Rolling Mean')
         self.time_series.plot()
@@ -175,8 +178,12 @@ class Arima():
         # ETS Plot
         decomp = seasonal_decompose(self.time_series, period=12)
         decomp.plot()
+        
+        forecast = f'/plots/timeseries/{self.ticker}_{self.now}_timeseries.png'
+        plt.savefig(self.public + forecast, bbox_inches='tight')
+        plt.close()  # Close the current figure
     
-    def plot_diff(self): # TODO : instead of plotting, return as images
+    def plot_diff(self): # TODO : make helper functions to to plot each instead of having to repeat
         '''
         Plot the first difference, second difference, seasonal difference, and seasonal first difference.
         '''
@@ -239,24 +246,51 @@ class Arima():
         self.results.resid.plot(kind='kde')
         
     def plot_autocorrelation(self): # TODO : instead of plotting, return as images
+        plt.figure()
+        
         # Autocorrelation Plots
-        plot_acf(self.df[self.FD].dropna())        
-        plot_acf(self.df[self.SFD].dropna())
-        autocorrelation_plot(self.df[self.SFD].dropna())
-        plot_pacf(self.df[self.SFD].dropna())
+        acf_fd = plot_acf(self.df[self.FD].dropna())        
+        acf_sfd =plot_acf(self.df[self.SFD].dropna())
+        acf_auto_sfd =autocorrelation_plot(self.df[self.SFD].dropna())
+        pacf_sfd =plot_pacf(self.df[self.SFD].dropna())
     
     # Stats
     def summ(self):
         ''' 
         Create summary statistics for the model to load into DB.
         '''
-        summary = self.summ_stats()
-        summary = pd.DataFrame.from_dict(summary, orient='index', columns=['Value'])
-        summary.index.name = 'Stat'
+        summary = str(self.results.summary())
         
-        summary.to_dict(orient='split')
+        # Define regular expressions for the desired values
+        patterns = {
+            'Model': r'Model:\s+(.*?)\s+Log',
+            'Log Likelihood': r'Log Likelihood\s+(\S+)',
+            'Date': r'Date:\s+(.*?)\s+AIC',
+            'AIC': r'AIC\s+(\S+)',
+            'Time': r'Time:\s+(\S+)\s+BIC',
+            'BIC': r'BIC\s+(\S+)',
+            'Sample': r'Sample:\s+(\S+)\s+HQIC',
+            'HQIC': r'HQIC\s+(\S+)',
+            'sigma2': r'sigma2\s+(\S+)',
+            'Ljung-Box (L1) (Q)': r'Ljung-Box \(L1\) \(Q\):\s+(\S+)',
+            'Jarque-Bera (JB)': r'Jarque-Bera \(JB\):\s+(\S+)',
+            'Prob(Q)': r'Prob\(Q\):\s+(\S+)',
+            'Heteroskedasticity (H)': r'Heteroskedasticity \(H\):\s+(\S+)',
+            'Skew': r'Skew:\s+(\S+)',
+            'Prob(H) (two-sided)': r'Prob\(H\) \(two-sided\):\s+(\S+)',
+            'Kurtosis': r'Kurtosis:\s+(\S+)',
+        }
         
-        return summary
+        # Initialize a dictionary to store extracted values
+        extracted_data = {}
+        
+        # Iterate through the patterns and extract the data
+        for key, pattern in patterns.items():
+            match = re.search(pattern, summary)
+            if match:
+                extracted_data[key] = match.group(1)
+                
+        return extracted_data
 
     def adf(self):
         '''
@@ -320,43 +354,30 @@ class Arima():
             adf[k] = v
         
         return adf
-
-    def summ_stats(self):
-        summary = str(self.results.summary())
-        
-        # Define regular expressions for the desired values
-        patterns = {
-            'Model': r'Model:\s+(.*?)\s+Log',
-            'Log Likelihood': r'Log Likelihood\s+(\S+)',
-            'Date': r'Date:\s+(.*?)\s+AIC',
-            'AIC': r'AIC\s+(\S+)',
-            'Time': r'Time:\s+(\S+)\s+BIC',
-            'BIC': r'BIC\s+(\S+)',
-            'Sample': r'Sample:\s+(\S+)\s+HQIC',
-            'HQIC': r'HQIC\s+(\S+)',
-            'sigma2': r'sigma2\s+(\S+)',
-            'Ljung-Box (L1) (Q)': r'Ljung-Box \(L1\) \(Q\):\s+(\S+)',
-            'Jarque-Bera (JB)': r'Jarque-Bera \(JB\):\s+(\S+)',
-            'Prob(Q)': r'Prob\(Q\):\s+(\S+)',
-            'Heteroskedasticity (H)': r'Heteroskedasticity \(H\):\s+(\S+)',
-            'Skew': r'Skew:\s+(\S+)',
-            'Prob(H) (two-sided)': r'Prob\(H\) \(two-sided\):\s+(\S+)',
-            'Kurtosis': r'Kurtosis:\s+(\S+)',
-        }
-        
-        # Initialize a dictionary to store extracted values
-        extracted_data = {}
-        
-        # Iterate through the patterns and extract the data
-        for key, pattern in patterns.items():
-            match = re.search(pattern, summary)
-            if match:
-                extracted_data[key] = match.group(1)
-                
-        return extracted_data
     
+    def sfd_plot(self):
+        pass
+    
+    def fd_plot(self):
+        plt.figure()
+        
+        plot = plot_acf(self.df[self.SFD].dropna())
+        
+        
+    
+    def secd_plot(self):
+        pass
+    
+    def sd_plot(self):
+        pass
+        
+        
 # Add more models below 
 if __name__ == '__main__':
     stock = Arima('NG=F')
     forecast = stock.plot_forecast()
+    timeseries = stock.plot_timeseries()
+    diff = stock.plot_diff()
+    resid = stock.plot_resid()
+    acf = stock.plot_autocorrelation()
     print(forecast)

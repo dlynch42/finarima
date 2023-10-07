@@ -20,14 +20,12 @@ def return_arima():
         print(f"Received user message: {ticker}", sep='\n')
     
     stock = Arima(ticker)
-    # forecast = stock.plot_forecast()
-    # print('forecast: ', forecast)
+    forecast = stock.plot_forecast()
+    print('forecast: ', forecast)
     
-    summary = stock.summ().to_dict()
-    # adf = stock.adf()
+    summary = stock.summ()
     
     adf_fd, adf_secd, adf_sd, adf_sfd = stock.adf()
-    # adf_fd, adf_secd, adf_sd, adf_sfd = adf_fd.to_dict(), adf_secd.to_dict(), adf_sd.to_dict(), adf_sfd.to_dict()
 
     # ts = stock.plot_timeseries()
     # diff = stock.plot_diff()
@@ -38,16 +36,14 @@ def return_arima():
     data = {
         # Mandatory fields
         'ticker': ticker,
-        # 'forecast': forecast,
+        'forecast': forecast,
         
         # Stats
         'summary': summary,
-        'adf': {
-            'fd': adf_fd, 
-            'secd': adf_secd, 
-            'sd': adf_sd, 
-            'sfd': adf_sfd
-        }
+        'fd': adf_fd, 
+        'secd': adf_secd, 
+        'sd': adf_sd, 
+        'sfd': adf_sfd
         
         # Optional fields
         # 'ts': ts,
