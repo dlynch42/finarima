@@ -4,6 +4,7 @@ export const formSchema = z.object({
     company: z.string().min(1, { 
         message: 'Ticker or Company Name is required' 
     }),
+    // options: z.string(),
 });
 
 // From constants image
@@ -17,27 +18,27 @@ export const formSchema = z.object({
 });
 
 // Options: Number of photos
-export const amountOptions = [
+export const modelPlots = [
     {
-        value: '1',
-        label: '1 Photo',
+        value: 'all',
+        label: 'All Plots',
     },
     {
-        value: '2',
-        label: '2 Photos',
+        value: 'ts',
+        label: 'Time Series',
     },
     {
-        value: '3',
-        label: '3 Photos',
+        value: 'diff',
+        label: 'Differencing',
     },
     {
-        value: '4',
-        label: '4 Photos',
+        value: 'resid',
+        label: 'Residuals',
     },
     {
-        value: '5',
-        label: '5 Photos',
-    }
+        value: 'acf',
+        label: 'Autocorrelation',
+    },
 ];
 
 // Options: Resolution

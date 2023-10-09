@@ -43,7 +43,7 @@ def return_arima():
         'fd': adf_fd, 
         'secd': adf_secd, 
         'sd': adf_sd, 
-        'sfd': adf_sfd
+        'sfd': adf_sfd,
         
         # Optional fields
         # 'ts': ts,
