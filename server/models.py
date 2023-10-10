@@ -161,7 +161,7 @@ class Arima():
         
         return forecast
     
-    def plot_timeseries(self): # TODO : instead of plotting, return as images
+    def plot_timeseries(self): 
         plt.figure()
         
         # Create rolling mean
@@ -179,80 +179,51 @@ class Arima():
         decomp = seasonal_decompose(self.time_series, period=12)
         decomp.plot()
         
-        forecast = f'/plots/timeseries/{self.ticker}_{self.now}_timeseries.png'
-        plt.savefig(self.public + forecast, bbox_inches='tight')
+        timeseries = f'/plots/timeseries/{self.ticker}_{self.now}_timeseries.png'
+        plt.savefig(self.public + timeseries, bbox_inches='tight')
         plt.close()  # Close the current figure
+        
+        return timeseries
     
-    def plot_diff(self): # TODO : make helper functions to to plot each instead of having to repeat
+    def plot_diff(self):
         '''
         Plot the first difference, second difference, seasonal difference, and seasonal first difference.
         '''
-        # Create a separate figure for each plot
-        plt.figure()
-        
-        # First difference, change from one period to the next
-        self.df[self.FD] = self.df['Close'].dropna() - self.df['Close'].dropna().shift(1)
-        
-        # Plot First Difference
-        self.df[self.FD].dropna().plot()
-        plt.title(self.FD)
-        plt.xlabel('Date')
-        fd = f'public/plots/diff/{self.ticker}_{self.now}_arima_{self.FD.lower()}.png'
-        plt.savefig(fd, bbox_inches='tight')
-        plt.close()  # Close the current figure
-        
-        # Create a new figure for the second difference
-        plt.figure()
+        # First Difference
+        fd = self.fd_plot()
         
         # Second Difference
-        self.df[self.SECD] = self.df[self.FD].dropna() - self.df[self.FD].dropna().shift(1)
-        
-        # Plot Second Difference
-        self.df[self.SECD].dropna().plot()
-        plt.title(self.SECD)
-        plt.xlabel('Date')
-        secd = f'public/plots/diff/{self.ticker}_{self.now}_arima_{self.SECD.lower()}.png'
-        plt.savefig(secd, bbox_inches='tight')
-        plt.close()  # Close the current figure
+        secd = self.secd_plot()
         
         # Seasonal
-        plt.figure()
-        self.df[self.SD] = self.df['Close'].dropna() - self.df['Close'].dropna().shift(30)
-        self.df[self.SD].dropna().plot()
-        
-        plt.title(self.SD)
-        plt.xlabel('Date')
-        
-        sd = f'public/plots/diff/{self.ticker}_{self.now}_arima_{self.SD.lower()}.png'
-        plt.savefig(sd, bbox_inches='tight')
-        plt.close()  # Close the current figure
+        sd = self.sd_plot()
         
         # Seasonal First Difference
-        plt.figure()
-        self.df[self.SFD] = self.df[self.FD] - self.df[self.FD].shift(30)
-        self.df[self.SFD].plot()
-        
-        plt.title(self.SFD)
-        plt.xlabel('Date')
-        
-        sfd = f'public/plots/diff/{self.ticker}_{self.now}_arima_{self.SFD.lower()}.png'
-        plt.savefig(sfd, bbox_inches='tight')
-        plt.close()  # Close the current figure
+        sfd = self.sfd_plot()
         
         return fd, secd, sd, sfd
     
-    def plot_resid(self): # TODO : instead of plotting, return as images
+    def plot_resid(self): 
+        plt.figure()
+        
         self.results.resid.plot()
         self.results.resid.plot(kind='kde')
         
-    def plot_autocorrelation(self): # TODO : instead of plotting, return as images
+        resid = f'/plots/resid/{self.ticker}_{self.now}_arima_resid.png'
+        plt.savefig(self.public + resid, bbox_inches='tight')
+        plt.close()  # Close the current figure
+        
+        return resid
+        
+    def plot_autocorrelation(self):
         plt.figure()
         
-        # Autocorrelation Plots
-        acf_fd = plot_acf(self.df[self.FD].dropna())        
-        acf_sfd =plot_acf(self.df[self.SFD].dropna())
-        acf_auto_sfd =autocorrelation_plot(self.df[self.SFD].dropna())
-        pacf_sfd =plot_pacf(self.df[self.SFD].dropna())
+        acf_fd = self.acf_fd_plot()
+        acf_sfd = self.acf_sfd_plot()
+        acf_auto_sfd = self.acf_auto_sfd_plot()
+        pacf_sfd = self.pacf_sfd_plot()
+        
+        return acf_fd, acf_sfd, acf_auto_sfd, pacf_sfd
     
     # Stats
     def summ(self):
@@ -297,6 +268,37 @@ class Arima():
         Just returns the adf results
         '''
         return self.adf_fd, self.adf_secd, self.adf_sd, self.adf_sfd
+    
+    def basics(self):
+        basics = yf.Ticker(self.ticker)
+        
+        if basics.history_metadata['instrumentType'] == 'FUTURE':
+            bus = None
+            ind = None
+            web = None
+            dayhigh = basics.info['dayHigh']
+            daylow = basics.info['dayLow']
+            dayopen = basics.info['open']
+            dayclose = basics.info['previousClose']
+            ytdhigh = basics.info['fiftyTwoWeekHigh']
+            ytdlow = basics.info['fiftyTwoWeekLow']
+            vol = basics.info['averageVolume']
+            
+            return bus, ind, web, dayhigh, daylow, dayopen, dayclose, ytdhigh, ytdlow, vol
+        
+        else:
+            bus = basics.info['longBusinessSummary']
+            ind = basics.info['industry']
+            web = basics.info['website']
+            dayhigh = basics.info['dayHigh']
+            daylow = basics.info['dayLow']
+            dayopen = basics.info['open']
+            dayclose = basics.info['previousClose']
+            ytdhigh = basics.info['fiftyTwoWeekHigh']
+            ytdlow = basics.info['fiftyTwoWeekLow']
+            vol = basics.info['averageVolume']
+            
+            return bus, ind, web, dayhigh, daylow, dayopen, dayclose, ytdhigh, ytdlow, vol
     
     # Loaders
     def load_forecast(self):
@@ -355,29 +357,132 @@ class Arima():
         
         return adf
     
-    def sfd_plot(self):
-        pass
-    
+    # Differencing Plot Helpers
     def fd_plot(self):
+        ''' 
+        First Difference
+        '''
+        # Create a separate figure for each plot
         plt.figure()
         
-        plot = plot_acf(self.df[self.SFD].dropna())
+        # First difference, change from one period to the next
+        self.df[self.FD] = self.df['Close'].dropna() - self.df['Close'].dropna().shift(1)
         
+        # Plot First Difference
+        self.df[self.FD].dropna().plot()
+        plt.title(self.FD)
+        plt.xlabel('Date')
+        fd = f'/plots/diff/{self.ticker}_{self.now}_arima_{self.FD.lower().replace(" ", "_")}.png'
+        plt.savefig(self.public + fd, bbox_inches='tight')
+        plt.close()  # Close the current figure
         
-    
+        return fd
+          
     def secd_plot(self):
-        pass
+        ''' 
+        Second Difference
+        '''
+        # Create a separate figure for each plot
+        plt.figure()
+        
+        # Second Difference
+        self.df[self.SECD] = self.df[self.FD].dropna() - self.df[self.FD].dropna().shift(1)
+        
+        # Plot Second Difference
+        self.df[self.SECD].dropna().plot()
+        plt.title(self.SECD)
+        plt.xlabel('Date')
+        secd = f'/plots/diff/{self.ticker}_{self.now}_arima_{self.SECD.lower().replace(" ", "_")}.png'
+        print(secd)
+        plt.savefig(self.public + secd, bbox_inches='tight')
+        plt.close()  # Close the current figure
+        
+        return secd
     
     def sd_plot(self):
-        pass
+        '''
+        Seasonal Difference
+        '''
+        plt.figure()
+        self.df[self.SD] = self.df['Close'].dropna() - self.df['Close'].dropna().shift(30)
+        self.df[self.SD].dropna().plot()
         
+        plt.title(self.SD)
+        plt.xlabel('Date')
+        
+        sd = f'/plots/diff/{self.ticker}_{self.now}_arima_{self.SD.lower().replace(" ", "_")}.png'
+        plt.savefig(self.public + sd, bbox_inches='tight')
+        plt.close()  # Close the current figure
+        
+        return sd
+        
+    def sfd_plot(self):
+        '''
+        Seasonal First Difference
+        '''
+        plt.figure()
+        self.df[self.SFD] = self.df[self.FD] - self.df[self.FD].shift(30)
+        self.df[self.SFD].plot()
+        
+        plt.title(self.SFD)
+        plt.xlabel('Date')
+        
+        sfd = f'/plots/diff/{self.ticker}_{self.now}_arima_{self.SFD.lower().replace(" ", "_")}.png'
+        plt.savefig(self.public + sfd, bbox_inches='tight')
+        plt.close()  # Close the current figure
+        
+        return sfd
+        
+    # Autocorrelation Plot Helpers
+    def acf_fd_plot(self):
+        plt.figure()
+        
+        plot_acf(self.df[self.SFD].dropna())
+        
+        acf_fd = f'/plots/autocorrelation/{self.ticker}_{self.now}_arima_{self.SFD.lower().replace(" ", "_")}_acf.png'
+        plt.savefig(self.public + acf_fd, bbox_inches='tight')
+        plt.close()  # Close the current figure
+        
+        return acf_fd
+        
+    def acf_sfd_plot(self):
+        plt.figure()
+        
+        plot_acf(self.df[self.FD].dropna())
+        
+        acf_sfd = f'/plots/autocorrelation/{self.ticker}_{self.now}_arima_{self.FD.lower().replace(" ", "_")}_acf.png'
+        plt.savefig(self.public + acf_sfd, bbox_inches='tight')
+        plt.close()  # Close the current figure
+        
+        return acf_sfd
+    
+    def acf_auto_sfd_plot(self):
+        plt.figure()
+        
+        autocorrelation_plot(self.df[self.SFD].dropna())
+        
+        acf_auto_sfd = f'/plots/autocorrelation/{self.ticker}_{self.now}_arima_{self.SFD.lower().replace(" ", "_")}_autocorrelation.png'
+        plt.savefig(self.public + acf_auto_sfd, bbox_inches='tight')
+        plt.close()  # Close the current figure
+        
+        return acf_auto_sfd
+    
+    def pacf_sfd_plot(self):
+        plt.figure()
+        
+        plot_pacf(self.df[self.SFD].dropna())
+        
+        pacf_sfd = f'/plots/autocorrelation/{self.ticker}_{self.now}_arima_{self.FD.lower().replace(" ", "_")}_pacf.png'
+        plt.savefig(self.public + pacf_sfd, bbox_inches='tight')
+        plt.close()  # Close the current figure
+        
+        return pacf_sfd
         
 # Add more models below 
 if __name__ == '__main__':
     stock = Arima('NG=F')
     forecast = stock.plot_forecast()
     timeseries = stock.plot_timeseries()
-    diff = stock.plot_diff()
+    fd, secd, sd, sfd = stock.plot_diff()
     resid = stock.plot_resid()
-    acf = stock.plot_autocorrelation()
-    print(forecast)
+    acf_fd, acf_sfd, acf_auto_sfd, pacf_sfd = stock.plot_autocorrelation()

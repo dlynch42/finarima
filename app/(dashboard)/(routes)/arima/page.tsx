@@ -18,7 +18,7 @@ import { formSchema } from "./constants";
 import { Loader } from "@/components/loader";
 import { Empty } from "@/components/empty";
 import { cn } from "@/lib/utils";
-import { Card, CardFooter } from "@/components/ui/card";
+import { Card, CardFooter, CardHeader } from "@/components/ui/card";
 
 interface Summary {
     Model: string;
@@ -50,6 +50,39 @@ interface Adf {
     hypothesis: string;
   }
 
+interface Images {
+    // Timeseries plot
+    timeseries: string;
+
+    //Differencing Plot
+    fd: string;
+    secd: string;
+    sd: string;
+    sfd: string;
+
+    // Residual Plot
+    resid: string;
+
+    // Autocorrelation Plot
+    acf_fd: string;
+    acf_sfd: string;
+    acf_auto_sfd: string;
+    pacf_sfd: string;
+}
+
+interface Basics{
+    bus: string;
+    ind: string;
+    web: string;
+    dayhigh: string;
+    daylow: string;
+    dayopen: string;
+    dayclose: string;
+    ytdhigh: string;
+    ytdlow: string;
+    vol: string;
+}
+
 const ArimaPage = () => {
     // Message State
     const [messages, setMessages] = useState<string[]>([]); // needs to be an array // TODO
@@ -58,10 +91,12 @@ const ArimaPage = () => {
     const [ticker, setTicker] = useState<string | undefined>(undefined);
     const [forecast, setForecast] = useState<string | undefined>(undefined);
     const [summary, setSummary] = useState<Summary | undefined>(undefined);
-    const [fd, setFd] = useState<Adf | undefined>(undefined);
-    const [secd, setSecd] = useState<Adf | undefined>(undefined);
-    const [sd, setSd] = useState<Adf | undefined>(undefined);
-    const [sfd, setSfd] = useState<Adf | undefined>(undefined);
+    const [images, setImages] = useState<Images | undefined>(undefined);
+    const [adf_fd, setAdf_fd] = useState<Adf | undefined>(undefined);
+    const [adf_secd, setAdf_secd] = useState<Adf | undefined>(undefined);
+    const [adf_sd, setAdf_sd] = useState<Adf | undefined>(undefined);
+    const [adf_sfd, setAdf_sfd] = useState<Adf | undefined>(undefined);
+    const [basics, setBasics] = useState<Basics | undefined>(undefined);
 
     // Router
     const router = useRouter();
@@ -104,12 +139,14 @@ const ArimaPage = () => {
             setTicker(responseData.ticker);
             setSummary(responseData.summary);
             setForecast(responseData.forecast);
-            setFd(responseData.fd);
-            setSecd(responseData.secd);
-            setSd(responseData.sd);
-            setSfd(responseData.sfd);
+            setImages(responseData.images);
+            setAdf_fd(responseData.adf_fd);
+            setAdf_secd(responseData.adf_secd); 
+            setAdf_sd(responseData.adf_sd);
+            setAdf_sfd(responseData.adf_sfd);
+            setBasics(responseData.basics);
 
-            form.reset(); // Reset the form
+            // form.reset(); // Reset the form
 
             console.log(responseData);
 
@@ -172,71 +209,598 @@ const ArimaPage = () => {
                 {messages.length === 0 && !isLoading && (
                     <Empty label="No query started."/>
                 )}
-                <div className="flex flex-col-reverse gap-y-4">
 
-                    <div className="px-4 lg:px-8 flex items-center gap-x-3 mb-8">
-                        {/* <div className="p-2 w-fit rounded-md">
-                        </div> */}
-                        <div>
-                            <h2 className="text-3xl font-bold">
-                                {ticker}
-                            </h2>
-                            <div>
-                                {/* {messages.map((forecast) => ( */}
-                                    <Card 
-                                        key={forecast}
-                                        className="rounded-lg overflow-hidden"
-                                    >
-                                        <div className="relative aspect-square">
-                                            {forecast && ( // Check if forecast is defined before rendering
-                                                <Image 
-                                                    alt="Image"
-                                                    fill
-                                                    src={forecast}
-                                                />
-                                            )}
+                {/* Returned */}
+                {messages.length !== 0 && !isLoading && (
+                    <div>
+                        {/* Mandatory  */}
+                        <h2 className="flex flex-col items-center text-3xl font-bold">
+                            {basics && (
+                                <a href={basics.web} target="_blank" rel="noopener noreferrer">
+                                        {ticker}
+                                </a>
+                            )}
+                        </h2>
+                        <div className="flex flex-col-reverse gap-y-4">
+                            <div className="px-4 lg:px-8 flex justify-between gap-x-3 mb-8">
+                                <div className="p-2 w-fit rounded-md"></div>
+                                <div className="p-2 w-fit rounded-md">
+                                    {forecast && (
+                                        <Card 
+                                            key={forecast}
+                                            className="rounded-lg overflow-hidden"
+                                        >
+                                            <CardHeader className="text-xl font-bold">
+                                                Forecast
+                                            </CardHeader>
+                                            <div className="relative aspect-square">
+                                                {forecast && (
+                                                    <Image 
+                                                        alt="Forecast"
+                                                        // fill
+                                                        src={forecast}
+                                                        width={542}
+                                                        height={542}
+                                                    />
+                                                )}
+                                            </div>
+                                            <CardFooter className="p-2">
+                                                <Button 
+                                                    onClick={() => window.open(forecast)}
+                                                    variant="secondary" 
+                                                    className="w-full"
+                                                >
+                                                    <Download className="h-4 w-4 mr-2"/>
+                                                    Download
+                                                </Button>
+                                            </CardFooter>
+                                        </Card>
+                                    )}
+                                </div>
+                                <div className="p-2 w-fit rounded-md">
+                                    {summary && (
+                                        <div className="p-2 w-fit rounded-md items-center">
+                                            <h2 className="text-xl font-bold">SARIMAX Results</h2>
+                                            <table className="p-2 table-auto">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Model:</td>
+                                                    <td>{summary.Model}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Log Likelihood:</td>
+                                                    <td>{summary["Log Likelihood"]}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>AIC:</td>
+                                                    <td>{summary.AIC}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>BIC:</td>
+                                                    <td>{summary.BIC}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Sample:</td>
+                                                    <td>{summary.Sample}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>HQIC:</td>
+                                                    <td>{summary.HQIC}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>sigma2:</td>
+                                                    <td>{summary.sigma2}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Ljung-Box (L1) (Q):</td>
+                                                    <td>{summary["Ljung-Box (L1) (Q)"]}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Jarque-Bera (JB):</td>
+                                                    <td>{summary["Jarque-Bera (JB)"]}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Prob(Q):</td>
+                                                    <td>{summary["Prob(Q)"]}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Heteroskedasticity (H): </td>
+                                                    <td>{summary["Heteroskedasticity (H)"]}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Skew:</td>
+                                                    <td>{summary.Skew}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Prob(H) (two-sided):</td>
+                                                    <td>{summary["Prob(H) (two-sided)"]}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Kurtosis:</td>
+                                                    <td>{summary.Kurtosis}</td>
+                                                </tr>
+                                            </tbody>
+                                            </table>
                                         </div>
-                                        <CardFooter className="p-2">
-                                            <Button 
-                                                onClick={() => window.open(forecast)}
-                                                variant="secondary" 
-                                                className="w-full"
-                                            >
-                                                <Download className="h-4 w-4 mr-2"/>
-                                                Download
-                                            </Button>
-                                        </CardFooter>
-                                    </Card>
-                                {/* ))} */}
+                                    )}
+                                </div>
+                                <div className="p-2 w-fit rounded-md">
+                                    {basics && (
+                                        <div className="p-2 w-fit rounded-md">
+                                            <h2 className="text-xl font-bold">
+                                                        About
+                                            </h2>
+                                            <p className="p-2 text-sm text-muted-foreground">
+                                            <ul>
+                                                <li>Industry: {basics.ind}</li>
+                                                <li>Day High: {basics.dayhigh}</li>
+                                                <li>Day Low: {basics.daylow}</li>
+                                                <li>Day Open: {basics.dayopen}</li>
+                                                <li>Day Close: {basics.dayclose}</li>
+                                                <li>YTD High: {basics.ytdhigh}</li>
+                                                <li>YTD Low: {basics.ytdlow}</li>
+                                                <li>Volume: {basics.vol}</li>
+                                            </ul>
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                            <p className="text-sm text-muted-foreground">
-                                {summary && (
-                                    <ul>
-                                        <li>Model: {summary.Model}</li>
-                                        <li>Log Likelihood: {summary["Log Likelihood"]}</li>
-                                        <li>Date: {summary.Date}</li>
-                                        <li>AIC: {summary.AIC}</li>
-                                        <li>Time: {summary.Time}</li>
-                                        <li>BIC: {summary.BIC}</li>
-                                        <li>Sample: {summary.Sample}</li>
-                                        <li>HQIC: {summary.HQIC}</li>
-                                        <li>sigma2: {summary.sigma2}</li>
-                                        <li>Ljung-Box (L1) (Q): {summary["Ljung-Box (L1) (Q)"]}</li>
-                                        <li>Jarque-Bera (JB): {summary["Jarque-Bera (JB)"]}</li>
-                                        <li>Prob(Q): {summary["Prob(Q)"]}</li>
-                                        <li>Heteroskedasticity (H): {summary["Heteroskedasticity (H)"]}</li>
-                                        <li>Skew: {summary.Skew}</li>
-                                        <li>Prob(H) (two-sided): {summary["Prob(H) (two-sided)"]}</li>
-                                        <li>Kurtosis: {summary.Kurtosis}</li>
-                                    </ul>
-                                )}
-                            </p>
+                        </div>
+
+                        {/* ADF */}
+                        <h2 className="flex flex-col items-center text-3xl font-bold">
+                                Augmented Dickey-Fuller Tests
+                        </h2>
+                        <div className="flex flex-col-reverse gap-y-4">
+                            <div className="px-4 lg:px-8 flex items-center gap-x-3 mb-8">
+                                <div className="p-2 w-fit rounded-md"></div>
+                                <div className="p-2 w-fit rounded-md">
+                                    {adf_fd && (
+                                        <div>
+                                        <h2 className="text-xl font-bold">
+                                            First Difference
+                                        </h2>
+                                        <p className="p-2 text-sm text-muted-foreground">
+                                            <ul>
+                                                <li>Test: {adf_fd.test}</li>
+                                                <li>Date: {adf_fd.date}</li>
+                                                <li>Test Stat: {adf_fd.test_stat}</li>
+                                                <li>P-value: {adf_fd.pvalue}</li>
+                                                <li>Lags: {adf_fd.lags}</li>
+                                                <li>Observations: {adf_fd.obs}</li>
+                                                <li>Hypothesis: {adf_fd.hypothesis}</li>
+                                            </ul>
+                                        </p>
+                                    </div>
+                                    )}
+                                    {images && (
+                                        <Card 
+                                            key={images.fd}
+                                            className="rounded-lg overflow-hidden"
+                                        >
+                                            <CardHeader className="text-xl font-bold">
+                                                First Difference
+                                            </CardHeader>
+                                            <div className="relative aspect-square">
+                                                {images.fd && (
+                                                    <Image 
+                                                        alt="First Difference"
+                                                        fill
+                                                        src={images.fd}
+                                                    />
+                                                )}
+                                            </div>
+                                            <CardFooter className="p-2">
+                                                <Button 
+                                                    onClick={() => window.open(images.fd)}
+                                                    variant="secondary" 
+                                                    className="w-full"
+                                                >
+                                                    <Download className="h-4 w-4 mr-2"/>
+                                                    Download
+                                                </Button>
+                                            </CardFooter>
+                                        </Card>
+                                    )}
+                                </div> 
+
+                                {/* Second Difference */}
+                                <div className="p-2 w-fit rounded-md">
+                                    {adf_secd && (
+                                        <div>
+                                        <h2 className="text-xl font-bold">
+                                            Second Difference
+                                        </h2>
+                                        <p className="p-2 text-sm text-muted-foreground">
+                                            <ul>
+                                                <li>Test: {adf_secd.test}</li>
+                                                <li>Date: {adf_secd.date}</li>
+                                                <li>Test Stat: {adf_secd.test_stat}</li>
+                                                <li>P-value: {adf_secd.pvalue}</li>
+                                                <li>Lags: {adf_secd.lags}</li>
+                                                <li>Observations: {adf_secd.obs}</li>
+                                                <li>Hypothesis: {adf_secd.hypothesis}</li>
+                                            </ul>
+                                        </p>
+                                    </div>
+                                    )}
+                                    {images && (
+                                        <Card 
+                                            key={images.secd}
+                                            className="rounded-lg overflow-hidden"
+                                        >
+                                            <CardHeader className="text-xl font-bold">
+                                                Second Difference
+                                            </CardHeader>
+                                            <div className="relative aspect-square">
+                                                {images.secd && (
+                                                    <Image 
+                                                        alt="Second Difference"
+                                                        fill
+                                                        src={images.secd}
+                                                    />
+                                                )}
+                                            </div>
+                                            <CardFooter className="p-2">
+                                                <Button 
+                                                    onClick={() => window.open(images.secd)}
+                                                    variant="secondary" 
+                                                    className="w-full"
+                                                >
+                                                    <Download className="h-4 w-4 mr-2"/>
+                                                    Download
+                                                </Button>
+                                            </CardFooter>
+                                        </Card>
+                                    )}
+                                </div>
+
+                                {/* Seasonal Difference */}
+                                <div className="p-2 w-fit rounded-md">
+                                    {adf_sd && (
+                                        <div>
+                                        <h2 className="text-xl font-bold">
+                                            Seasonal Difference
+                                        </h2>
+                                        <p className="p-2 text-sm text-muted-foreground">
+                                            <ul>
+                                                <li>Test: {adf_sd.test}</li>
+                                                <li>Date: {adf_sd.date}</li>
+                                                <li>Test Stat: {adf_sd.test_stat}</li>
+                                                <li>P-value: {adf_sd.pvalue}</li>
+                                                <li>Lags: {adf_sd.lags}</li>
+                                                <li>Observations: {adf_sd.obs}</li>
+                                                <li>Hypothesis: {adf_sd.hypothesis}</li>
+                                            </ul>
+                                        </p>
+                                    </div>
+                                    )}
+                                    {images && (
+                                        <Card 
+                                            key={images.sd}
+                                            className="rounded-lg overflow-hidden"
+                                        >
+                                            <CardHeader className="text-xl font-bold">
+                                                Seasonal Difference
+                                            </CardHeader>
+                                            <div className="relative aspect-square">
+                                                {images.sd && (
+                                                    <Image 
+                                                        alt="Seasonal Difference"
+                                                        fill
+                                                        src={images.sd}
+                                                    />
+                                                )}
+                                            </div>
+                                            <CardFooter className="p-2">
+                                                <Button 
+                                                    onClick={() => window.open(images.sd)}
+                                                    variant="secondary" 
+                                                    className="w-full"
+                                                >
+                                                    <Download className="h-4 w-4 mr-2"/>
+                                                    Download
+                                                </Button>
+                                            </CardFooter>
+                                        </Card>
+                                    )}
+                                </div>
+
+                                {/* Seasonal First Difference */}
+                                <div className="p-2 w-fit rounded-md">
+                                    {adf_sfd && (
+                                        <div>
+                                        <h2 className="text-xl font-bold">
+                                            Seasonal First Difference
+                                        </h2>
+                                        <p className="p-2 text-sm text-muted-foreground">
+                                            <ul>
+                                                <li>Test: {adf_sfd.test}</li>
+                                                <li>Date: {adf_sfd.date}</li>
+                                                <li>Test Stat: {adf_sfd.test_stat}</li>
+                                                <li>P-value: {adf_sfd.pvalue}</li>
+                                                <li>Lags: {adf_sfd.lags}</li>
+                                                <li>Observations: {adf_sfd.obs}</li>
+                                                <li>Hypothesis: {adf_sfd.hypothesis}</li>
+                                            </ul>
+                                        </p>
+                                    </div>
+                                    )}
+                                    {images && (
+                                        <Card 
+                                            key={images.sfd}
+                                            className="rounded-lg overflow-hidden"
+                                        >
+                                            <CardHeader className="text-xl font-bold">
+                                            Seasonal First Difference
+                                            </CardHeader>
+                                            <div className="relative aspect-square">
+                                                {images.sfd && (
+                                                    <Image 
+                                                        alt="Seasonal First Difference"
+                                                        fill
+                                                        src={images.sfd}
+                                                    />
+                                                )}
+                                            </div>
+                                            <CardFooter className="p-2">
+                                                <Button 
+                                                    onClick={() => window.open(images.sfd)}
+                                                    variant="secondary" 
+                                                    className="w-full"
+                                                >
+                                                    <Download className="h-4 w-4 mr-2"/>
+                                                    Download
+                                                </Button>
+                                            </CardFooter>
+                                        </Card>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Autocorrelation */}
+                        <h2 className="flex flex-col items-center text-3xl font-bold">
+                                Autocorrelation & Other Plots
+                        </h2>
+                        <div className="flex flex-col-reverse gap-y-4">
+                            <div className="px-4 lg:px-8 flex items-center gap-x-3 mb-8">
+                                <div className="p-2 w-fit rounded-md"></div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:gird-cols-4 gap-4 mt-8">
+                                    <div className="p-2 w-fit rounded-md">
+                                        {images && (
+                                            <div>
+                                                <Card 
+                                                    key={images.acf_fd}
+                                                    className="rounded-lg overflow-hidden"
+                                                >
+                                                    <CardHeader className="text-xl font-bold">
+                                                    First Difference
+                                                    </CardHeader>
+                                                    <div className="relative aspect-square">
+                                                        {images.acf_fd && (
+                                                            <Image 
+                                                                alt="First Difference"
+                                                                width={542}
+                                                                height={542}
+                                                                src={images.acf_fd}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    <CardFooter className="p-2">
+                                                        <Button 
+                                                            onClick={() => window.open(images.acf_fd)}
+                                                            variant="secondary" 
+                                                            className="w-full"
+                                                        >
+                                                            <Download className="h-4 w-4 mr-2"/>
+                                                            Download
+                                                        </Button>
+                                                    </CardFooter>
+                                                </Card>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="p-2 w-fit rounded-md">
+                                        {images && (
+                                            <div>
+                                                {/* Autocorrelation (Seasonal First Difference) */}
+                                                <Card 
+                                                    key={images.acf_sfd}
+                                                    className="rounded-lg overflow-hidden"
+                                                >
+                                                    <CardHeader className="text-xl font-bold">
+                                                        Seasonal First Difference
+                                                    </CardHeader>
+                                                    <div className="relative aspect-square">
+                                                        {images.acf_sfd && (
+                                                            <Image 
+                                                                alt="Seasonal First Difference"
+                                                                width={542}
+                                                                height={542}
+                                                                src={images.acf_sfd}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    <CardFooter className="p-2">
+                                                        <Button 
+                                                            onClick={() => window.open(images.acf_sfd)}
+                                                            variant="secondary" 
+                                                            className="w-full"
+                                                        >
+                                                            <Download className="h-4 w-4 mr-2"/>
+                                                            Download
+                                                        </Button>
+                                                    </CardFooter>
+                                                </Card>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="p-2 w-fit rounded-md">
+                                        {images && (
+                                        <div>
+                                            {/* Seasonal First Difference - Autocorrelation */}
+                                            <Card 
+                                                key={images.acf_auto_sfd}
+                                                className="rounded-lg overflow-hidden"
+                                            >
+                                                <CardHeader className="text-xl font-bold">
+                                                    Seasonal First Difference (Autocorrelation)
+                                                </CardHeader>
+                                                <div className="relative aspect-square">
+                                                    {images.acf_auto_sfd && (
+                                                        <Image 
+                                                            alt="Seasonal First Difference (Autocorrelation)"
+                                                            width={542}
+                                                            height={542}
+                                                            src={images.acf_auto_sfd}
+                                                        />
+                                                    )}
+                                                </div>
+                                                <CardFooter className="p-2">
+                                                    <Button 
+                                                        onClick={() => window.open(images.acf_auto_sfd)}
+                                                        variant="secondary" 
+                                                        className="w-full"
+                                                    >
+                                                        <Download className="h-4 w-4 mr-2"/>
+                                                        Download
+                                                    </Button>
+                                                </CardFooter>
+                                            </Card>
+                                        </div>
+                                        )}
+                                    </div>
+                                    <div className="p-2 w-fit rounded-md">
+                                        {images && (
+                                            <div>
+                                                {/* Partial Autocorrelation (First Difference) */}
+                                                <Card 
+                                                    key={images.pacf_sfd}
+                                                    className="rounded-lg overflow-hidden"
+                                                >
+                                                    <CardHeader className="text-xl font-bold">
+                                                        Partial Autocorrelation (First Difference)
+                                                    </CardHeader>
+                                                    <div className="relative aspect-square">
+                                                        {images.pacf_sfd && (
+                                                            <Image 
+                                                                alt="Partial Autocorrelation (First Difference)"
+                                                                width={542}
+                                                                height={542}
+                                                                src={images.pacf_sfd}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    <CardFooter className="p-2">
+                                                        <Button 
+                                                            onClick={() => window.open(images.pacf_sfd)}
+                                                            variant="secondary" 
+                                                            className="w-full"
+                                                        >
+                                                            <Download className="h-4 w-4 mr-2"/>
+                                                            Download
+                                                        </Button>
+                                                    </CardFooter>
+                                                </Card>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="p-2 w-fit rounded-md">
+                                        {images && (
+                                            <div >
+                                                <Card 
+                                                    key={images.timeseries}
+                                                    className="rounded-lg overflow-hidden"
+                                                >
+                                                    <CardHeader className="text-xl font-bold">
+                                                        Time Series
+                                                    </CardHeader>
+                                                    <div className="relative aspect-square">
+                                                        {images.timeseries && (
+                                                            <Image 
+                                                                alt="Timeseries"
+                                                                src={images.timeseries}
+                                                                width={542}
+                                                                height={542}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    <CardFooter className="p-2">
+                                                        <Button 
+                                                            onClick={() => window.open(images.timeseries)}
+                                                            variant="secondary" 
+                                                            className="w-full"
+                                                        >
+                                                            <Download className="h-4 w-4 mr-2"/>
+                                                            Download
+                                                        </Button>
+                                                    </CardFooter>
+                                                </Card>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="p-2 w-fit rounded-md">
+                                        {images && (
+                                            <div>
+                                                <Card 
+                                                    key={images.resid}
+                                                    className="rounded-lg overflow-hidden"
+                                                >
+                                                    <CardHeader className="text-xl font-bold">
+                                                    Residual
+                                                    </CardHeader>
+                                                    <div className="relative aspect-square">
+                                                        {images.resid && (
+                                                            <Image 
+                                                                alt="Timeseries"
+                                                                src={images.resid}
+                                                                width={542}
+                                                                height={542}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    <CardFooter className="p-2">
+                                                        <Button 
+                                                            onClick={() => window.open(images.resid)}
+                                                            variant="secondary" 
+                                                            className="w-full"
+                                                        >
+                                                            <Download className="h-4 w-4 mr-2"/>
+                                                            Download
+                                                        </Button>
+                                                    </CardFooter>
+                                                </Card>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Co. Description */}
+                        <div className="flex flex-col-reverse gap-y-4">
+                            <div className="px-4 lg:px-8 flex items-center gap-x-3 mb-8">
+                                <div className="p-2 w-fit rounded-md"></div>
+                                    <div className="p-2 w-fit rounded-md">
+                                        {basics && (
+                                            <div className="p-2 w-fit rounded-md flex flex-col items-center text-xl">
+                                                <p className="flex flex-col items-center p-2 text-sm text-muted-foreground">
+                                                <ul>
+                                                    <li>{basics.bus}</li>
+                                                </ul>
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
-        </div>
+    </div>
     );
 }
 
