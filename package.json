@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "flask-dev": "FLASK_DEBUG=1 pip3 install -r requirements.txt && python -m flask --app api/index run -p 8080",
+    "flask-dev": "FLASK_DEBUG=1 pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080",
     "next-dev": "next dev",
-    "dev": "concurrently \"pnpm run next-dev\" \"pnpm run flask-dev\"",
+    "dev": "concurrently \"npm run next-dev\" \"npm run flask-dev\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -56,6 +56,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "autoprefixer": "latest",
+    "concurrently": "^8.2.1",
     "eslint": "latest",
     "eslint-config-next": "latest",
     "postcss": "latest",
