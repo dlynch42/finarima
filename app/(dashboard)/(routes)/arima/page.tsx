@@ -1,14 +1,12 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from 'next/image';
-import { Form, set } from "react-hook-form";
 import { Heading } from "@/components/heading";
 import { Download, Rocket } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { zodResolver } from "@hookform/resolvers/zod";  // just '@' goes to package
-import { useForm, SubmitHandler, FormProvider, Controller, UseFormReturn } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import axios from "axios";
 import * as z from "zod";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
@@ -17,7 +15,6 @@ import { useRouter } from "next/navigation";
 import { formSchema } from "./constants";
 import { Loader } from "@/components/loader";
 import { Empty } from "@/components/empty";
-import { cn } from "@/lib/utils";
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
 
 interface Summary {
@@ -85,7 +82,7 @@ interface Basics{
 
 const ArimaPage = () => {
     // Message State
-    const [messages, setMessages] = useState<string[]>([]); // needs to be an array // TODO
+    const [messages, setMessages] = useState<string[]>([]);
 
     // Results
     const [ticker, setTicker] = useState<string | undefined>(undefined);
@@ -164,7 +161,12 @@ const ArimaPage = () => {
             <div>
                 <Heading 
                     title="ARIMA"
-                    description="ARIMA is a forecasting model that uses past data to predict future values" // TODO
+                    description="ARIMA (AutoRegressive Integrated Moving Average) modeling is a fundamental technique in stock forecasting. 
+                                It combines autoregressive, differencing, and moving average components to capture past relationships, remove trends, 
+                                and account for short-term fluctuations in historical stock price data. 
+                                Analysts use ARIMA models to make future price predictions by selecting appropriate orders for these components (p, d, q) and evaluating model performance. 
+                                While ARIMA modeling is valuable for short to medium-term forecasting, 
+                                it may not fully capture all factors influencing stock prices, necessitating the use of additional techniques and data sources for more accurate predictions"
                     icon={Rocket}
                     iconColor="text-violet-500"
                     bgColor="bg-violet-500/10"
