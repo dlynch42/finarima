@@ -1,10 +1,6 @@
 import json
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import pandas as pd
-import warnings
-import threading
-import os
 
 from models import Arima
 
@@ -86,5 +82,5 @@ def return_arima():
     
     return jsonify(data), 200
 
-# if __name__ == '__main__':
-#     app.run(port=8080)
+if __name__ == '__main__':
+    app.run(port=8080)
