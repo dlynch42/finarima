@@ -1,3 +1,7 @@
+import re
+import os
+import datetime
+import warnings
 import numpy as np
 import pandas as pd
 from pandas.plotting import autocorrelation_plot
@@ -8,13 +12,11 @@ from statsmodels.tsa.arima_model import ARIMA
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.seasonal import seasonal_decompose
+import yfinance as yf
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import yfinance as yf
-import warnings
-import re
-import datetime
+
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 class Arima():
@@ -480,7 +482,7 @@ class Arima():
         
 # Add more models below 
 if __name__ == '__main__':
-    stock = Arima('NG=F')
+    stock = Arima('AAPL')
     forecast = stock.plot_forecast()
     timeseries = stock.plot_timeseries()
     fd, secd, sd, sfd = stock.plot_diff()
