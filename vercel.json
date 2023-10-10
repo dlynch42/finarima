@@ -1,14 +1,22 @@
 {
     "builds": [
         {
-            "src": "api/index.py",
-            "use": "@vercel/python"
+          "src": "app", 
+          "use": "@vercel/node" 
+        },
+        {
+          "src": "api", 
+          "use": "@now/python" 
         }
-    ],
+      ],
     "routes": [
         {
-            "source": "/(.*)", 
-            "destination": "/api/index" 
+            "src": "/api/(.*)",
+            "dest": "api/arima.py" 
+        },
+        {
+            "src": "/(.*)",
+            "dest": "app/$1"
         }
     ]
 }
