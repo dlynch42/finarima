@@ -5,6 +5,7 @@
   "proxy": "http://localhost:8080",
 
   "scripts": {
+    "flask-dev": "python -m flask --app api/index run -p 8080 --reload",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
