@@ -39,7 +39,7 @@ class Arima():
         self.df, self.results = self.model(self.df)
         self.forecasted_df = self.forecast(self.df, self.forecast_timeframe)
         
-        # TODO : Load into Prisma
+        # TODO : Load into DB
 
     # Setups
     def setup(self, ticker):
@@ -362,16 +362,14 @@ class Arima():
         ''' 
         First Difference
         '''
-        # Create a separate figure for each plot
         plt.figure()
         
-        # First difference, change from one period to the next
         self.df[self.FD] = self.df['Close'].dropna() - self.df['Close'].dropna().shift(1)
-        
-        # Plot First Difference
         self.df[self.FD].dropna().plot()
+        
         plt.title(self.FD)
         plt.xlabel('Date')
+        
         fd = f'/plots/diff/{self.ticker}_{self.now}_arima_{self.FD.lower().replace(" ", "_")}.png'
         plt.savefig(self.public + fd, bbox_inches='tight')
         plt.close()  # Close the current figure
@@ -382,18 +380,15 @@ class Arima():
         ''' 
         Second Difference
         '''
-        # Create a separate figure for each plot
         plt.figure()
         
-        # Second Difference
         self.df[self.SECD] = self.df[self.FD].dropna() - self.df[self.FD].dropna().shift(1)
-        
-        # Plot Second Difference
         self.df[self.SECD].dropna().plot()
+        
         plt.title(self.SECD)
         plt.xlabel('Date')
+        
         secd = f'/plots/diff/{self.ticker}_{self.now}_arima_{self.SECD.lower().replace(" ", "_")}.png'
-        print(secd)
         plt.savefig(self.public + secd, bbox_inches='tight')
         plt.close()  # Close the current figure
         
@@ -404,6 +399,7 @@ class Arima():
         Seasonal Difference
         '''
         plt.figure()
+        
         self.df[self.SD] = self.df['Close'].dropna() - self.df['Close'].dropna().shift(30)
         self.df[self.SD].dropna().plot()
         
@@ -421,6 +417,7 @@ class Arima():
         Seasonal First Difference
         '''
         plt.figure()
+        
         self.df[self.SFD] = self.df[self.FD] - self.df[self.FD].shift(30)
         self.df[self.SFD].plot()
         
