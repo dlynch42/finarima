@@ -7,7 +7,7 @@ scratch.txt
 .env
 /data
 *.png
-api/arima.ipynb
+*.ipynb
 
 # dependencies
 /node_modules

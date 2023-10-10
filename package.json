@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "flask-dev": "FLASK_DEBUG=1 pip3 install -r requirements.txt && python3 -m flask --app api/arima run -p 8080 --reload",
+    "flask-dev": "virtualenv -p /usr/bin/python3.9 myenv && source myenv/bin/activate && FLASK_DEBUG=1 pip3 install -r requirements.txt && python3 -m flask --app api/arima run -p 8080 --reload",
     "next-dev": "next dev",
     "dev": "concurrently \"pnpm run next-dev\" \"pnpm run flask-dev\"",
     "build": "next build",
