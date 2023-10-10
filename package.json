@@ -7,7 +7,7 @@
     "next-dev": "next dev",
     "dev": "concurrently \"npm run next-dev\" \"npm run flask-dev\"",
 
-    "flask-build": "FLASK_DEBUG=1 pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080",
+    "flask-build": "pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080",
     "next-build": "next build",
     "build": "concurrently \"npm run next-build\" \"npm run flask-build\"",
 
