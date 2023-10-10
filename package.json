@@ -3,21 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "flask-dev": "pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080 --reload",
+    "flask-dev": "FLASK_DEBUG=1 pip3 install -r requirements.txt && python3 -m flask --app api/index run -p 8000 --reload",
     "next-dev": "next dev",
     "dev": "concurrently \"pnpm run next-dev\" \"pnpm run flask-dev\"",
-
-    "flask-build": "python3 -m venv .venv && source .venv/bin/activate && pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080 --reload",
-    "next-build": "next build",
-    "build": "concurrently \"pnpm run next-build\" \"pnpm run flask-build\"",
-
-    "flask-start": "pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080 --reload",
-    "next-start": "next start",
-    "start": "concurrently \"pnpm run next-start\" \"pnpm run flask-start\"",
-
-    "flask-lint": "pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080 --reload",
-    "next-lint": "next lint",
-    "lint": "concurrently \"pnpm run next-lint\" \"pnpm run flask-lint\""
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.1",
