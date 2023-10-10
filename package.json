@@ -7,10 +7,9 @@
     "next-dev": "next dev",
     "dev": "concurrently \"npm run next-dev\" \"npm run flask-dev\"",
 
-    "venv-build": "python3 -m venv .venv",
-    "flask-build": "source .venv/bin/activate && pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080",
+    "flask-build": "python3 -m venv .venv && source .venv/bin/activate && pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080",
     "next-build": "next build",
-    "build": "concurrently \"npm run next-build\" \"npm run venv-build\" \"npm run flask-build\"",
+    "build": "concurrently \"npm run next-build\" \"npm run flask-build\"",
 
     "flask-start": "pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080",
     "next-start": "next start",
