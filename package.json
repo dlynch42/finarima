@@ -6,9 +6,18 @@
     "flask-dev": "FLASK_DEBUG=1 pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080",
     "next-dev": "next dev",
     "dev": "concurrently \"npm run next-dev\" \"npm run flask-dev\"",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+
+    "flask-build": "FLASK_DEBUG=1 pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080",
+    "next-build": "next build",
+    "build": "concurrently \"npm run next-build\" \"npm run flask-build\"",
+
+    "flask-start": "pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080",
+    "next-start": "next start",
+    "start": "concurrently \"npm run next-start\" \"npm run flask-start\"",
+
+    "flask-lint": "pip3 install -r requirements.txt && python -m flake8 api/arima",
+    "next-lint": "next lint",
+    "lint": "concurrently \"npm run next-lint\" \"npm run flask-lint\""
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.1",
