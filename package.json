@@ -3,21 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "flask-dev": "FLASK_DEBUG=1 pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080",
+    "flask-dev": "pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080 --reload",
     "next-dev": "next dev",
-    "dev": "concurrently \"npm run next-dev\" \"npm run flask-dev\"",
+    "dev": "concurrently \"pnpm run next-dev\" \"pnpm run flask-dev\"",
 
-    "flask-build": "python3 -m venv .venv && source .venv/bin/activate && pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080",
+    "flask-build": "python3 -m venv .venv && source .venv/bin/activate && pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080 --reload",
     "next-build": "next build",
-    "build": "concurrently \"npm run next-build\" \"npm run flask-build\"",
+    "build": "concurrently \"pnpm run next-build\" \"pnpm run flask-build\"",
 
-    "flask-start": "pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080",
+    "flask-start": "pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080 --reload",
     "next-start": "next start",
-    "start": "concurrently \"npm run next-start\" \"npm run flask-start\"",
+    "start": "concurrently \"pnpm run next-start\" \"pnpm run flask-start\"",
 
-    "flask-lint": "pip3 install -r requirements.txt && python -m flake8 api/arima",
+    "flask-lint": "pip3 install -r requirements.txt && python -m flask --app api/arima run -p 8080 --reload",
     "next-lint": "next lint",
-    "lint": "concurrently \"npm run next-lint\" \"npm run flask-lint\""
+    "lint": "concurrently \"pnpm run next-lint\" \"pnpm run flask-lint\""
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.1",

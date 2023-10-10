@@ -1,13 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    rewrites: async () => {
+  rewrites: async () => {
       return [
-        {
-          source: '/api/:path*',
-          destination:'http://127.0.0.1:8080/api/:path*'
-        },
+      {
+          source: '/api/arima',
+          destination:
+          process.env.NODE_ENV === 'development'
+              ? 'http://127.0.0.1:8080/api/arima'
+              : '/api/',
+      },
       ]
-    },
-  }
-  
-  module.exports = nextConfig
+},
+}
+
+module.exports = nextConfig
