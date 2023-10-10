@@ -34,7 +34,7 @@ six==1.16.0
 soupsieve==2.5
 statsmodels==0.14.0
 tzdata==2023.3
-urllib3==2.0.6
+urllib3==1.26.6
 webencodings==0.5.1
 Werkzeug==3.0.0
 yfinance==0.2.30
