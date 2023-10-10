@@ -477,7 +477,7 @@ class Arima():
         
 # Add more models below 
 if __name__ == '__main__':
-    stock = Arima('NG=F')
+    stock = Arima('UNG')
     forecast = stock.plot_forecast()
     timeseries = stock.plot_timeseries()
     fd, secd, sd, sfd = stock.plot_diff()
