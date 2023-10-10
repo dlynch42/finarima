@@ -2,10 +2,8 @@
   "name": "finarima",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8080",
-
   "scripts": {
-    "flask-dev": "python -m flask --app api/index run -p 8080 --reload",
+    "flask-dev": "pip3 install -r requirements.txt && python -m flask --app api/index run -p 8080",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
