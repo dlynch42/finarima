@@ -2,12 +2,9 @@
 
 # Manual
 *.csv
-/venv
-scratch.txt
 .env
 /data
 *.png
-*.ipynb
 .vscode
 
 # dependencies
@@ -46,3 +43,6 @@ next-env.d.ts
 
 # Python
 __pycache__
+api/
+*.ipynb
+/.models
