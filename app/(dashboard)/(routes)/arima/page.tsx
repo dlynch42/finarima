@@ -47,7 +47,7 @@ interface Adf {
     lags: number;
     obs: number;
     hypothesis: string;
-  }
+}
 
 // Images Interface
 interface Images {
