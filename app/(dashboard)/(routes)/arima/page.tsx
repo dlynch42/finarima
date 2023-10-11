@@ -17,6 +17,7 @@ import { Loader } from "@/components/loader";
 import { Empty } from "@/components/empty";
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
 
+// Summary Inteface
 interface Summary {
     Model: string;
     "Log Likelihood": string;
@@ -36,6 +37,7 @@ interface Summary {
     Kurtosis: string;
 }  
 
+// ADF Interface
 interface Adf {
     symbol: string;
     test: string;
@@ -47,6 +49,7 @@ interface Adf {
     hypothesis: string;
   }
 
+// Images Interface
 interface Images {
     // Timeseries plot
     timeseries: string;
@@ -67,6 +70,7 @@ interface Images {
     pacf_sfd: string;
 }
 
+// Basics Interface
 interface Basics{
     bus: string;
     ind: string;
@@ -80,6 +84,7 @@ interface Basics{
     vol: string;
 }
 
+// Arima Page
 const ArimaPage = () => {
     // Message State
     const [messages, setMessages] = useState<string[]>([]);
@@ -104,8 +109,7 @@ const ArimaPage = () => {
           company: ""
         }
     });
-      
-
+    
     // Loading state
     const isLoading = form.formState.isSubmitting;
 
@@ -123,8 +127,9 @@ const ArimaPage = () => {
             };
 
             // API Post
-            const response = await axios.post('http://localhost:8080/api/arima', requestData);
-
+            const response = await axios.post('http://localhost:8080/api/arima', requestData); 
+            // TODO : Change to production url: S3 Beanstalk
+            // const response = await axios.post('http://localhost:8080/api/arima', requestData); 
 
             // Extract the data from the response
             const responseData = response.data;

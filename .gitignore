@@ -8,6 +8,7 @@ scratch.txt
 /data
 *.png
 *.ipynb
+.vscode
 
 # dependencies
 /node_modules
