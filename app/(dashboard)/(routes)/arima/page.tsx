@@ -170,7 +170,7 @@ const ArimaPage = () => {
                                 It combines autoregressive, differencing, and moving average components to capture past relationships, remove trends, 
                                 and account for short-term fluctuations in historical stock price data. 
                                 Analysts use ARIMA models to make future price predictions by selecting appropriate orders for these components (p, d, q) and evaluating model performance. 
-                                While ARIMA modeling is valuable for short to medium-term forecasting, 
+                                Just like any model, ARIMA has its limitations and 
                                 it may not fully capture all factors influencing stock prices, necessitating the use of additional techniques and data sources for more accurate predictions"
                     icon={Rocket}
                     iconColor="text-violet-500"
@@ -214,7 +214,7 @@ const ArimaPage = () => {
                 )}
 
                 {messages.length === 0 && !isLoading && (
-                    <Empty label="No query started."/>
+                    <Empty label="Disclaimer: This data is for informational purposes only and should not be considered as financial advice. Any decisions made based on this data are at your own risk. We are not responsible for any losses or gains resulting from your actions." />
                 )}
 
                 {/* Returned */}
@@ -803,6 +803,21 @@ const ArimaPage = () => {
                                     </div>
                             </div>
                         </div>
+                        {/* Disclaimer */}
+                        <div className="flex flex-col-reverse gap-y-4">
+                            <div className="px-4 lg:px-8 flex items-center gap-x-3 mb-8">
+                                <div className="p-2 w-fit rounded-md"></div>
+                                    <div className="p-2 w-fit rounded-md">
+                                        {basics && (
+                                            <div className="p-2 w-fit rounded-md flex flex-col items-center text-xl">
+                                                <p className="flex flex-col items-center p-2 text-sm text-muted-foreground">
+                                                Disclaimer: This data is for informational purposes only and should not be considered as financial advice. Any decisions made based on this data are at your own risk. We are not responsible for any losses or gains resulting from your actions.
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
@@ -811,4 +826,4 @@ const ArimaPage = () => {
     );
 }
 
-export default ArimaPage;
+export default ArimaPage; 
