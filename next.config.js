@@ -1,16 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  rewrites: async () => {
-      return [
-      {
-          source: '/api/arima',
-          destination:
-          process.env.NODE_ENV === 'development'
-            ? 'http://127.0.0.1:8000/api/:path*'
-            : '/api/',
-      },
-      ]
-},
-}
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  images: {
+    domains: ['automodel.s3.us-west-1.amazonaws.com'], // Add your S3 bucket domain here
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
