@@ -127,11 +127,11 @@ const ArimaPage = () => {
             };
             console.log(requestData)
 
-            // API Post
+            // API Post: Uncomment for local development
             // const response = await axios.post('http://localhost:8080/api/arima', requestData); 
             // TODO : Change to production url: API Gateway
             const response = await axios.post(
-                'https://7pvgmlb63a.execute-api.us-west-1.amazonaws.com/test/automodel', 
+                'https://7pvgmlb63a.execute-api.us-west-1.amazonaws.com/prod/automodel', 
                 requestData
             ); 
 
