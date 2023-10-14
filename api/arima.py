@@ -16,6 +16,7 @@ def return_arima():
     if request.method == 'POST':
         # Parse the JSON data
         request_data = json.loads(request.data)
+        print(f"Received user message: {request_data}", sep='\n')
         ticker = request_data.get('messages', [])[-1].upper()
         print(f"Received user message: {ticker}", sep='\n')
     
@@ -83,4 +84,4 @@ def return_arima():
     return jsonify(data), 200
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=8080)

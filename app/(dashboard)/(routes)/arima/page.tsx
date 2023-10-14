@@ -118,18 +118,18 @@ const ArimaPage = () => {
         // Send user message (the prompt)
         try { 
             const userMessage = values.company;
-            const newMessages = [messages, userMessage];
-            console.log(newMessages);
-
-             // Create a structured request object
+            console.log(userMessage)
+            
+            // Create a structured request object with just the string "aapl"
             const requestData = {
-                messages: newMessages,
+                messages: userMessage,
             };
+            console.log(requestData)
 
             // API Post
-            const response = await axios.post('http://localhost:8080/api/arima', requestData); 
-            // TODO : Change to production url: S3 Beanstalk
             // const response = await axios.post('http://localhost:8080/api/arima', requestData); 
+            // TODO : Change to production url: API Gateway
+            const response = await axios.post('https://7pvgmlb63a.execute-api.us-west-1.amazonaws.com/test/automodel', requestData); 
 
             // Extract the data from the response
             const responseData = response.data;
