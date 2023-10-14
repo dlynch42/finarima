@@ -90,15 +90,15 @@ const ArimaPage = () => {
     const [messages, setMessages] = useState<string[]>([]);
 
     // Results
-    const [ticker, setTicker] = useState<string | undefined>(undefined);
-    const [forecast, setForecast] = useState<string | undefined>(undefined);
-    const [summary, setSummary] = useState<Summary | undefined>(undefined);
-    const [images, setImages] = useState<Images | undefined>(undefined);
-    const [adf_fd, setAdf_fd] = useState<Adf | undefined>(undefined);
-    const [adf_secd, setAdf_secd] = useState<Adf | undefined>(undefined);
-    const [adf_sd, setAdf_sd] = useState<Adf | undefined>(undefined);
-    const [adf_sfd, setAdf_sfd] = useState<Adf | undefined>(undefined);
-    const [basics, setBasics] = useState<Basics | undefined>(undefined);
+    const [ticker, setTicker] = useState<string>();
+    const [forecast, setForecast] = useState<string>();
+    const [summary, setSummary] = useState<Summary>();
+    const [images, setImages] = useState<Images>();
+    const [adf_fd, setAdf_fd] = useState<Adf>();
+    const [adf_secd, setAdf_secd] = useState<Adf>();
+    const [adf_sd, setAdf_sd] = useState<Adf>();
+    const [adf_sfd, setAdf_sfd] = useState<Adf>();
+    const [basics, setBasics] = useState<Basics>();
 
     // Router
     const router = useRouter();
@@ -119,6 +119,7 @@ const ArimaPage = () => {
         try { 
             const userMessage = values.company;
             console.log(userMessage)
+            const newUserMessage = [userMessage];
             
             // Create a structured request object with just the string "aapl"
             const requestData = {
@@ -129,24 +130,38 @@ const ArimaPage = () => {
             // API Post
             // const response = await axios.post('http://localhost:8080/api/arima', requestData); 
             // TODO : Change to production url: API Gateway
-            const response = await axios.post('https://7pvgmlb63a.execute-api.us-west-1.amazonaws.com/test/automodel', requestData); 
+            const response = await axios.post(
+                'https://7pvgmlb63a.execute-api.us-west-1.amazonaws.com/test/automodel', 
+                requestData
+            ); 
 
             // Extract the data from the response
-            const responseData = response.data;
+            const responseData = JSON.parse(response.data.body);
 
             // Set messages
-            setMessages((current) => [current, userMessage, responseData.messages]);
+            // setMessages((current) => [current, ...responseData.messages]);
+            setMessages((current) => [...current, ...newUserMessage]);
 
             // Set the state variables based on the response data
             setTicker(responseData.ticker);
-            setSummary(responseData.summary);
             setForecast(responseData.forecast);
+            setSummary(responseData.summary);
             setImages(responseData.images);
             setAdf_fd(responseData.adf_fd);
             setAdf_secd(responseData.adf_secd); 
             setAdf_sd(responseData.adf_sd);
             setAdf_sfd(responseData.adf_sfd);
             setBasics(responseData.basics);
+
+            console.log("Ticker:", ticker);
+            console.log("Forecast:", forecast);
+            console.log("Summary:", summary);
+            console.log("Images:", images);
+            console.log("ADF (First Difference):", adf_fd);
+            console.log("ADF (Second Difference):", adf_secd);
+            console.log("ADF (Seasonal Difference):", adf_sd);
+            console.log("ADF (Seasonal First Difference):", adf_sfd);
+            console.log("Basics:", basics);
 
             // form.reset(); // Reset the form
 

@@ -37,17 +37,14 @@ def return_arima():
     # Get the image dimensions from the saved file    
     data = {
         'ticker': ticker,
-        
         # # Plotted forecast
         'forecast': forecast,  
-        
         # Stats
         'summary': summary,
         'adf_fd': adf_fd,
         'adf_secd': adf_secd,
         'adf_sd': adf_sd,
         'adf_sfd': adf_sfd,
-        
         'images': {
             # Timeseries Plot
             'timeseries': timeseries,
@@ -64,7 +61,6 @@ def return_arima():
             'acf_auto_sfd': acf_auto_sfd, 
             'pacf_sfd': pacf_sfd
         },
-        
         'basics': {
             'bus': bus,
             'ind': ind,
