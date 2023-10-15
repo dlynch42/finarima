@@ -12,36 +12,37 @@ datasource db {
 }
 
 model Securities {
-  symbol                      String @id @unique
-  name                        String
+  symbol                      String @id @unique // Ticker symbol
+  name                        String // Company name
+  description                 String // Company description
 }
 
 model Stats {
-  symbol                      String @id
-  date                        DateTime
-  model                       String
-  log_likelihood              Float
-  aic                         Float
-  bic                         Float
-  sample                      Int
-  hqic                        Float
-  sigma2                      Float
-  ljung_box                   Float
-  jarque_bera                 Float
-  prob_q                      Float
-  h                           Float
-  skew                        Float
-  prob_h                      Float
-  kurtosis                    Float
+  symbol                      String @id // Ticker symbol
+  date                        DateTime // Date of query
+  model                       String // Model used
+  log_likelihood              Float // Log likelihood
+  aic                         Float // Akaike information criterion
+  bic                         Float // Bayesian information criterion
+  sample                      Int // Sample size
+  hqic                        Float // Hannan-Quinn information criterion
+  sigma2                      Float // Variance
+  ljung_box                   Float // Ljung-Box test
+  jarque_bera                 Float // Jarque-Bera test
+  prob_q                      Float // Probability of Ljung-Box test
+  h                           Float // H statistic
+  skew                        Float // Skewness 
+  prob_h                      Float // Probability of H statistic
+  kurtosis                    Float // Kurtosis
 }
 
 model Adf {
-  symbol                      String @id
-  test                        String
-  date                        DateTime
-  test_stat                   Float
-  pvalue                      Float
-  lags                        Int
-  obs                         Int
-  hypothesis                  String
+  symbol                      String @id // Ticker symbol
+  test                        String // Test used 
+  date                        DateTime // Date of query
+  test_stat                   Float // Test statistic
+  pvalue                      Float // P-value
+  lags                        Int // Number of lags used 
+  obs                         Int // Number of observations used
+  hypothesis                  String // Hypothesis used
 }
