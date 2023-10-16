@@ -11,14 +11,15 @@ datasource db {
   relationMode = "prisma"
 }
 
-model Securities {
-  symbol                      String @id @unique // Ticker symbol
+model Stocks {
+  id                          Int @id @default(autoincrement())
+  symbol                      String @unique // Ticker symbol
   name                        String // Company name
-  description                 String // Company description
 }
 
 model Stats {
-  symbol                      String @id // Ticker symbol
+  id                          Int @id @default(autoincrement())
+  symbol                      String // Ticker symbol
   date                        DateTime // Date of query
   model                       String // Model used
   log_likelihood              Float // Log likelihood
@@ -37,7 +38,8 @@ model Stats {
 }
 
 model Adf {
-  symbol                      String @id // Ticker symbol
+  id                          Int @id @default(autoincrement())
+  symbol                      String // Ticker symbol
   test                        String // Test used 
   date                        DateTime // Date of query
   test_stat                   Float // Test statistic
