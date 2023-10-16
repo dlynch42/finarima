@@ -14,7 +14,6 @@ datasource db {
 model Securities {
   symbol                      String @id @unique // Ticker symbol
   name                        String // Company name
-  description                 String // Company description
 }
 
 model Stats {

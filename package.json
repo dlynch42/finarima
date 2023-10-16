@@ -9,8 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-solutions-constructs/aws-apigateway-sqs": "^2.45.0",
     "@hookform/resolvers": "^3.3.1",
-    "@prisma/client": "^5.4.1",
+    "@prisma/client": "^5.4.2",
     "@radix-ui/react-avatar": "^1.0.3",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
@@ -53,7 +54,7 @@
     "eslint": "latest",
     "eslint-config-next": "latest",
     "postcss": "latest",
-    "prisma": "^5.4.0",
+    "prisma": "^5.4.2",
     "tailwindcss": "latest",
     "typescript": "latest"
   }
