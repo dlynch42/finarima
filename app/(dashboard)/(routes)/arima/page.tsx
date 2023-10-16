@@ -16,6 +16,7 @@ import { formSchema } from "./constants";
 import { Loader } from "@/components/loader";
 import { Empty } from "@/components/empty";
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
+import prismadb from "@/lib/prismadb";
 
 // Summary Inteface
 interface Summary {
@@ -84,6 +85,24 @@ interface Basics{
     vol: string;
 }
 
+export async function getServerSideProps() {
+    const stats = await prismadb.stats.findMany()
+    const fd = await prismadb.adf.findMany() // where { test: "First Difference" }
+    const secd = await prismadb.adf.findMany() // where { test: "Second Difference" }
+    const sd = await prismadb.adf.findMany() // where { test: "Seasonal Difference" }
+    const sfd = await prismadb.adf.findMany() // where { test: "Seasonal First Difference" }
+  
+    return {
+      props: {
+        stats,
+        fd,
+        secd,
+        sd,
+        sfd
+      }
+    }
+  }
+
 // Arima Page
 const ArimaPage = () => {
     // Message State
@@ -129,9 +148,15 @@ const ArimaPage = () => {
 
             // API Post: Uncomment for local development
             // const response = await axios.post('http://localhost:8080/api/arima', requestData); 
-            // TODO : Change to production url: API Gateway
-            const response = await axios.post(
-                'https://7pvgmlb63a.execute-api.us-west-1.amazonaws.com/prod/automodel', 
+
+            // // Change to production url: API Gateway
+            // const response = await axios.post(
+            //     'https://7pvgmlb63a.execute-api.us-west-1.amazonaws.com/prod/automodel', 
+            //     requestData
+            // ); 
+
+            // Change to production url: API Gateway
+            const response = await axios.post('/api/arima', 
                 requestData
             ); 
 
@@ -139,7 +164,6 @@ const ArimaPage = () => {
             const responseData = JSON.parse(response.data.body);
 
             // Set messages
-            // setMessages((current) => [current, ...responseData.messages]);
             setMessages((current) => [...current, ...newUserMessage]);
 
             // Set the state variables based on the response data
@@ -153,20 +177,8 @@ const ArimaPage = () => {
             setAdf_sfd(responseData.adf_sfd);
             setBasics(responseData.basics);
 
-            console.log("Ticker:", ticker);
-            console.log("Forecast:", forecast);
-            console.log("Summary:", summary);
-            console.log("Images:", images);
-            console.log("ADF (First Difference):", adf_fd);
-            console.log("ADF (Second Difference):", adf_secd);
-            console.log("ADF (Seasonal Difference):", adf_sd);
-            console.log("ADF (Seasonal First Difference):", adf_sfd);
-            console.log("Basics:", basics);
-
             // form.reset(); // Reset the form
-
-            console.log(responseData);
-
+            
         } catch (error: any) {
             toast.error("Something went wrong.");
             console.error(error);

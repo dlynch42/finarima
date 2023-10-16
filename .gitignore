@@ -3,7 +3,7 @@
 # Manual
 *.csv
 .env
-/data
+*/data
 *.png
 .vscode
 
@@ -43,6 +43,6 @@ next-env.d.ts
 
 # Python
 __pycache__
-api/
+python/
 *.ipynb
 /.models
