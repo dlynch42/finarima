@@ -42,10 +42,10 @@ interface Adf {
     symbol: string;
     test: string;
     date: string;
-    test_stat: number;
-    pvalue: number;
-    lags: number;
-    obs: number;
+    test_stat: string;
+    pvalue: string;
+    lags: string;
+    obs: string;
     hypothesis: string;
 }
 
@@ -127,9 +127,7 @@ const ArimaPage = () => {
             };
             console.log(requestData)
 
-            // API Post: Uncomment for local development
-            // const response = await axios.post('http://localhost:8080/api/arima', requestData); 
-            // TODO : Change to production url: API Gateway
+            // Change to production url: API Gateway
             const response = await axios.post(
                 'https://7pvgmlb63a.execute-api.us-west-1.amazonaws.com/prod/automodel', 
                 requestData
@@ -138,8 +136,14 @@ const ArimaPage = () => {
             // Extract the data from the response
             const responseData = JSON.parse(response.data.body);
 
+            // Post to Prisma DB
+            const db = await axios.post(
+                "/api/arima", 
+                responseData
+            );
+            console.log(db.data)
+
             // Set messages
-            // setMessages((current) => [current, ...responseData.messages]);
             setMessages((current) => [...current, ...newUserMessage]);
 
             // Set the state variables based on the response data
@@ -153,20 +157,8 @@ const ArimaPage = () => {
             setAdf_sfd(responseData.adf_sfd);
             setBasics(responseData.basics);
 
-            console.log("Ticker:", ticker);
-            console.log("Forecast:", forecast);
-            console.log("Summary:", summary);
-            console.log("Images:", images);
-            console.log("ADF (First Difference):", adf_fd);
-            console.log("ADF (Second Difference):", adf_secd);
-            console.log("ADF (Seasonal Difference):", adf_sd);
-            console.log("ADF (Seasonal First Difference):", adf_sfd);
-            console.log("Basics:", basics);
-
             // form.reset(); // Reset the form
-
-            console.log(responseData);
-
+            
         } catch (error: any) {
             toast.error("Something went wrong.");
             console.error(error);
@@ -584,7 +576,7 @@ const ArimaPage = () => {
                         
                         {/* Autocorrelation */}
                         <h2 className="flex flex-col items-center text-3xl font-bold">
-                                Autocorrelation & Other Plots
+                                Autocorrelations, Timeseries, and Residual
                         </h2>
                         <div className="flex flex-col-reverse gap-y-4">
                             <div className="px-4 lg:px-8 flex items-center gap-x-3 mb-8">
