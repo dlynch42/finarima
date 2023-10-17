@@ -31,7 +31,6 @@
     "lucide-react": "^0.274.0",
     "mysql2": "^3.6.1",
     "next": "^13.3.4",
-    "papaparse": "^5.4.1",
     "postcss": "8.4.29",
     "react": "^18.2.0",
     "react-dom": "18.2.0",
