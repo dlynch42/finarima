@@ -16,7 +16,6 @@ import { formSchema } from "./constants";
 import { Loader } from "@/components/loader";
 import { Empty } from "@/components/empty";
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
-import prismadb from "@/lib/prismadb";
 
 // Summary Inteface
 interface Summary {
