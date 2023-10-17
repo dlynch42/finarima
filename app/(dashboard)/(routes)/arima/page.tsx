@@ -132,9 +132,10 @@ const ArimaPage = () => {
                 'https://7pvgmlb63a.execute-api.us-west-1.amazonaws.com/prod/automodel', 
                 requestData
             ); 
-
+            
             // Extract the data from the response
             const responseData = JSON.parse(response.data.body);
+            console.log(responseData)
 
             // Post to Prisma DB
             const db = await axios.post(
