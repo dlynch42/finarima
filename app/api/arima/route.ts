@@ -120,7 +120,6 @@ export async function POST(
         } catch (error) {
             console.error("Error loading ADF Second Difference data:", error);
         }
-
         
         // Load ADF Seasonal Difference Data to Prisma
         try {    
