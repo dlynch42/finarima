@@ -1,26 +1,25 @@
 import { NextResponse } from 'next/server';
-import axios from 'axios';
-// import { } from "react";
 import prismadb from "@/lib/prismadb";
+// Store ARIMA Data in Prisma
 
 // Summary Inteface
 interface Summary {
     Model: string;
-    "Log Likelihood": number;
+    "Log Likelihood": string;
     Date: string;
-    AIC: number;
+    AIC: string;
     Time: string;
-    BIC: number;
-    Sample: number;
-    HQIC: number;
-    sigma2: number;
-    "Ljung-Box (L1) (Q)": number;
-    "Jarque-Bera (JB)": number;
-    "Prob(Q)": number;
-    "Heteroskedasticity (H)": number;
-    Skew: number;
-    "Prob(H) (two-sided)": number;
-    Kurtosis: number;
+    BIC: string;
+    Sample: string;
+    HQIC: string;
+    sigma2: string;
+    "Ljung-Box (L1) (Q)": string;
+    "Jarque-Bera (JB)": string;
+    "Prob(Q)": string;
+    "Heteroskedasticity (H)": string;
+    Skew: string;
+    "Prob(H) (two-sided)": string;
+    Kurtosis: string;
 }  
 
 // ADF Interface
@@ -28,10 +27,10 @@ interface Adf {
     symbol: string;
     test: string;
     date: string;
-    test_stat: number;
-    pvalue: number;
-    lags: number;
-    obs: number;
+    test_stat: string;
+    pvalue: string;
+    lags: string;
+    obs: string;
     hypothesis: string;
 }
 
@@ -39,18 +38,9 @@ interface Adf {
 export async function POST(
     req: Request
 ) { 
-    const body = await req.json();
-    const { message } = body;
+    const responseData = await req.json();
     
-    try {
-        const response = await axios.post(
-            'https://7pvgmlb63a.execute-api.us-west-1.amazonaws.com/prod/automodel', 
-            message
-        ); 
-
-        // Extract the data from the response
-        const responseData = JSON.parse(response.data.body);
-        
+    try {        
         // Results
         const ticker: string = responseData.ticker;
         const summary:  Summary = responseData.summary;
@@ -59,93 +49,98 @@ export async function POST(
         const adf_sd: Adf = responseData.adf_sd;
         const adf_sfd: Adf = responseData.adf_sfd;
 
-        // Load into Prisma
-        const dbPromises = [
-            // Load Summary data to Prisma
-            await prismadb.stats.create({
-                data: {
-                    symbol: ticker,
-                    date: summary.Date,
-                    model: summary.Model,
-                    log_likelihood: summary["Log Likelihood"],
-                    aic: summary.AIC,
-                    bic: summary.BIC,
-                    sample: summary.Sample,
-                    hqic: summary.HQIC,
-                    sigma2: summary.sigma2,
-                    ljung_box: summary["Ljung-Box (L1) (Q)"],
-                    jarque_bera: summary["Jarque-Bera (JB)"],
-                    prob_q: summary["Prob(Q)"],
-                    h: summary["Heteroskedasticity (H)"],
-                    skew: summary.Skew,
-                    prob_h: summary["Prob(H) (two-sided)"],
-                    kurtosis: summary.Kurtosis,                    
-                },
-            }),
+        // Dates
+        const statdate = new Date(summary.Date).toISOString();
+        const fddate = new Date(adf_fd.date).toISOString();
+        const secddate = new Date(adf_secd.date).toISOString();
+        const sddate = new Date(adf_sd.date).toISOString();
+        const sfddate = new Date(adf_sfd.date).toISOString();
 
-            // Load ADF First Difference Data to Prisma
-            await prismadb.adf.create({
-                data: {
-                    symbol: ticker,
-                    test: adf_fd.test,
-                    date: adf_fd.date,
-                    test_stat: adf_fd.test_stat,
-                    pvalue: adf_fd.pvalue,
-                    lags: adf_fd.lags,
-                    obs: adf_fd.obs,
-                    hypothesis: adf_fd.hypothesis,
-                },
-            }),
+        // Load Summary data to Prisma
+        await prismadb.stats.create({
+            data: {
+                symbol: ticker,
+                date: statdate,
+                model: summary.Model,
+                log_likelihood: summary["Log Likelihood"],
+                aic: summary.AIC,
+                bic: summary.BIC,
+                sample: summary.Sample,
+                hqic: summary.HQIC,
+                sigma2: summary.sigma2,
+                ljung_box: summary["Ljung-Box (L1) (Q)"],
+                jarque_bera: summary["Jarque-Bera (JB)"],
+                prob_q: summary["Prob(Q)"],
+                h: summary["Heteroskedasticity (H)"],
+                skew: summary.Skew,
+                prob_h: summary["Prob(H) (two-sided)"],
+                kurtosis: summary.Kurtosis,                    
+            },
+        });
 
-            // Load ADF Second Difference Data to Prisma
-            await prismadb.adf.create({
-                data: {
-                    symbol: ticker,
-                    test: adf_secd.test,
-                    date: adf_secd.date,
-                    test_stat: adf_secd.test_stat,
-                    pvalue: adf_secd.pvalue,
-                    lags: adf_secd.lags,
-                    obs: adf_secd.obs,
-                    hypothesis: adf_secd.hypothesis,
-                },
-            }),
-            
-            // Load ADF Seasonal Difference Data to Prisma
-            await prismadb.adf.create({
-                data: {
-                    symbol: ticker,
-                    test: adf_sd.test,
-                    date: adf_sd.date,
-                    test_stat: adf_sd.test_stat,
-                    pvalue: adf_sd.pvalue,
-                    lags: adf_sd.lags,
-                    obs: adf_sd.obs,
-                    hypothesis: adf_sd.hypothesis,
-                },
-            }),
+        // Load ADF First Difference Data to Prisma
+        await prismadb.adf.create({
+            data: {
+                symbol: ticker,
+                test: adf_fd.test,
+                date: fddate,
+                test_stat: adf_fd.test_stat.toString(),
+                pvalue: adf_fd.pvalue.toString(),
+                lags: adf_fd.lags.toString(),
+                obs: adf_fd.obs.toString(),
+                hypothesis: adf_fd.hypothesis.toString(),
+            },
+        });
 
-            // Load ADF Seasonal First Difference Data to Prisma
-            await prismadb.adf.create({
-                data: {
-                    symbol: ticker,
-                    test: adf_sfd.test,
-                    date: adf_sfd.date,
-                    test_stat: adf_sfd.test_stat,
-                    pvalue: adf_sfd.pvalue,
-                    lags: adf_sfd.lags,
-                    obs: adf_sfd.obs,
-                    hypothesis: adf_sfd.hypothesis,
-                },
-            }),
-        ];
+        // Load ADF Second Difference Data to Prisma
+        await prismadb.adf.create({
+            data: {
+                symbol: ticker,
+                test: adf_secd.test,
+                date: secddate,
+                test_stat: adf_secd.test_stat.toString(),
+                pvalue: adf_secd.pvalue.toString(),
+                lags: adf_secd.lags.toString(),
+                obs: adf_secd.obs.toString(),
+                hypothesis: adf_secd.hypothesis.toString(),
+            },
+        });
+        
+        // Load ADF Seasonal Difference Data to Prisma
+        await prismadb.adf.create({
+            data: {
+                symbol: ticker,
+                test: adf_sd.test,
+                date: sddate,
+                test_stat: adf_sd.test_stat.toString(),
+                pvalue: adf_sd.pvalue.toString(),
+                lags: adf_sd.lags.toString(),
+                obs: adf_sd.obs.toString(),
+                hypothesis: adf_sd.hypothesis.toString(),
+            },
+        });
 
-        Promise.all(dbPromises);
+        // Load ADF Seasonal First Difference Data to Prisma
+        await prismadb.adf.create({
+            data: {
+                symbol: ticker,
+                test: adf_sfd.test,
+                date: sfddate,
+                test_stat: adf_sfd.test_stat.toString(),
+                pvalue: adf_sfd.pvalue.toString(),
+                lags: adf_sfd.lags.toString(),
+                obs: adf_sfd.obs.toString(),
+                hypothesis: adf_sfd.hypothesis.toString(),
+            },
+        });
 
-        return NextResponse.json(response);
+        // send the post object back to the client
+        console.log("Success");
+
+        return NextResponse.json("Success", { status: 200 })
 
     } catch (error) {
-        console.log("Error", error);
+        console.log("Error:", error);
         return new NextResponse("Internal error", { status: 500 })
     }
 }

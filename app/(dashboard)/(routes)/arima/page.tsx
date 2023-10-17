@@ -43,10 +43,10 @@ interface Adf {
     symbol: string;
     test: string;
     date: string;
-    test_stat: number;
-    pvalue: number;
-    lags: number;
-    obs: number;
+    test_stat: string;
+    pvalue: string;
+    lags: string;
+    obs: string;
     hypothesis: string;
 }
 
@@ -84,24 +84,6 @@ interface Basics{
     ytdlow: string;
     vol: string;
 }
-
-export async function getServerSideProps() {
-    const stats = await prismadb.stats.findMany()
-    const fd = await prismadb.adf.findMany() // where { test: "First Difference" }
-    const secd = await prismadb.adf.findMany() // where { test: "Second Difference" }
-    const sd = await prismadb.adf.findMany() // where { test: "Seasonal Difference" }
-    const sfd = await prismadb.adf.findMany() // where { test: "Seasonal First Difference" }
-  
-    return {
-      props: {
-        stats,
-        fd,
-        secd,
-        sd,
-        sfd
-      }
-    }
-  }
 
 // Arima Page
 const ArimaPage = () => {
@@ -146,22 +128,21 @@ const ArimaPage = () => {
             };
             console.log(requestData)
 
-            // API Post: Uncomment for local development
-            // const response = await axios.post('http://localhost:8080/api/arima', requestData); 
-
-            // // Change to production url: API Gateway
-            // const response = await axios.post(
-            //     'https://7pvgmlb63a.execute-api.us-west-1.amazonaws.com/prod/automodel', 
-            //     requestData
-            // ); 
-
             // Change to production url: API Gateway
-            const response = await axios.post('/api/arima', 
+            const response = await axios.post(
+                'https://7pvgmlb63a.execute-api.us-west-1.amazonaws.com/prod/automodel', 
                 requestData
             ); 
 
             // Extract the data from the response
             const responseData = JSON.parse(response.data.body);
+
+            // Post to Prisma DB
+            const db = await axios.post(
+                "/api/arima", 
+                responseData
+            );
+            console.log(db.data)
 
             // Set messages
             setMessages((current) => [...current, ...newUserMessage]);
@@ -596,7 +577,7 @@ const ArimaPage = () => {
                         
                         {/* Autocorrelation */}
                         <h2 className="flex flex-col items-center text-3xl font-bold">
-                                Autocorrelation & Other Plots
+                                Autocorrelations, Timeseries, and Residual
                         </h2>
                         <div className="flex flex-col-reverse gap-y-4">
                             <div className="px-4 lg:px-8 flex items-center gap-x-3 mb-8">
