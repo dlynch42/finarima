@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
+import { Analytics } from "@vercel/analytics/react";
 
 const DashboardLayout = async ({ 
     children 
@@ -16,6 +17,7 @@ const DashboardLayout = async ({
             <main className="md:pl-72"> 
                 <Navbar />
                 {children}
+                <Analytics />
             </main>
         </div>
     )
