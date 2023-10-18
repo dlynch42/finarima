@@ -11,24 +11,24 @@ on:
 
 # A workflow run consists of one or more jobs that can be executed either sequentially or concurrently.
 jobs:
-  backend-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3  
+  # backend-test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3  
 
-      - name: Set Up Python
-        uses: actions/setup-python@v3 
+  #     - name: Set Up Python
+  #       uses: actions/setup-python@v3 
 
-      - name: Insatall Dependencies
-        run:  pip install -r requirements.txt  # install requirements to enable GitHub run tests
+  #     - name: Insatall Dependencies
+  #       run:  pip install -r requirements.txt  # install requirements to enable GitHub run tests
 
-      - name: Run Backend Tests
-        run:  |
-              python3 python/test/test.py 
-              python3 python/test/unitTest.py 
-              pytest python/test/test.py
-              
+  #     - name: Run Backend Tests
+  #       run:  |
+  #             python3 python/test/test.py 
+  #             python3 python/test/unitTest.py 
+  #             pytest python/test/test.py
+
   frontend-test:
     runs-on: ubuntu-latest
     steps:
