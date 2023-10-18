@@ -5,6 +5,7 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
-    baseUrl: 'https://automodel.vercel.app',
+    // baseUrl: 'https://automodel.vercel.app',
+    baseUrl: 'http://localhost:8080'
   },
 });

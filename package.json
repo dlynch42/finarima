@@ -7,7 +7,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "cy:start": "my-server -p 8080",
+    "cy:start": "http-server -p 8080",
     "cy:run": "cypress run",
     "test": "start-server-and-test cy:start http://localhost:8080 cy:run"
   },
@@ -55,10 +55,12 @@
     "@types/react-dom": "latest",
     "autoprefixer": "latest",
     "concurrently": "^8.2.1",
+    "cypress": "^13.3.1",
     "eslint": "latest",
     "eslint-config-next": "latest",
     "postcss": "latest",
     "prisma": "^5.4.2",
+    "start-server-and-test": "^2.0.1",
     "tailwindcss": "latest",
     "typescript": "latest"
   }
