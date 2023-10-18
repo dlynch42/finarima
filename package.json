@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "cy:start": "my-server -p 8080",
+    "cy:run": "cypress run",
+    "test": "start-server-and-test cy:start http://localhost:8080 cy:run"
   },
   "dependencies": {
     "@aws-solutions-constructs/aws-apigateway-sqs": "^2.45.0",
