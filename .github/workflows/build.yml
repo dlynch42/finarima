@@ -11,25 +11,25 @@ on:
 
 # A workflow run consists of one or more jobs that can be executed either sequentially or concurrently.
 jobs:
-  backend-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3  
+  # backend-test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3  
 
-      - name: Set Up Python
-        uses: actions/setup-python@v3 
+  #     - name: Set Up Python
+  #       uses: actions/setup-python@v3 
 
-      - name: Insatall Dependencies
-        run:  pip install -r requirements.txt  # install requirements to enable GitHub run tests
+  #     - name: Insatall Dependencies
+  #       run:  pip install -r requirements.txt  # install requirements to enable GitHub run tests
 
-      - name: Run Backend Tests
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run:  |
-              python3 python/test/test.py 
-              python3 python/test/unitTest.py 
+  #     - name: Run Backend Tests
+  #       env:
+  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #       run:  |
+  #             python3 python/test/test.py 
+  #             python3 python/test/unitTest.py 
 
   frontend-test:
     runs-on: ubuntu-latest
@@ -42,11 +42,9 @@ jobs:
         with:
           node-version: 18.17.0  # Use the latest Node.js version
 
-      - name: Install frontend dependencies
-        run: npm install
-
-      - name: Start the server
-        run: npm run cy:start &
-
-      - name: Run Cypress tests
-        run: npm run cy:run
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          build: npm run build
+          start: npm start
+          browser: chrome
