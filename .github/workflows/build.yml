@@ -14,12 +14,6 @@ jobs:
   backend-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::215770188184:role/automodel-ghactions
-          aws-region: us-west-1
-          
       - name: Checkout code
         uses: actions/checkout@v3  
 
@@ -30,6 +24,9 @@ jobs:
         run:  pip install -r requirements.txt  # install requirements to enable GitHub run tests
 
       - name: Run Backend Tests
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run:  |
               python3 python/test/test.py 
               python3 python/test/unitTest.py 
@@ -44,7 +41,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: latest  # Use the latest Node.js version
+          node-version: 18.17.0  # Use the latest Node.js version
 
       - name: Install frontend dependencies
         run: npm install
