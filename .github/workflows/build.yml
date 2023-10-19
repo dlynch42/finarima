@@ -30,7 +30,6 @@ jobs:
         run:  |
               python3 python/test/test.py 
               python3 python/test/unitTest.py 
-              pytest python/test/test.py
 
   frontend-test:
     runs-on: ubuntu-latest
