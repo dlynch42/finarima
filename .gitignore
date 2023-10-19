@@ -47,3 +47,4 @@ __pycache__
 *.ipynb
 /.models
 .pytest_cache
+lambdaAPI/
