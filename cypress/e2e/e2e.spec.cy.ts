@@ -61,6 +61,8 @@ describe('Integration Test', () => {
 
     cy.get('div').contains('Start Modeling').click()
 
+    cy.wait(5000)
+
     cy.url().should('include', '/home')
 
     cy.get('div').contains('ARIMA').click()
