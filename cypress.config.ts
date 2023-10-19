@@ -6,6 +6,7 @@ export default defineConfig({
       // implement node event listeners here
     },
     // baseUrl: 'https://automodel.vercel.app',
-    baseUrl: 'http://localhost:8080'
+    // baseUrl: 'http://localhost:8080'
+    baseUrl: 'http://localhost:3000' // Changed for github actions
   },
 });
