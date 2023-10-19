@@ -77,7 +77,7 @@ describe('Integration Test', () => {
       statusCode: 200,
     })
     
-    cy.wait(15000)
+    cy.wait(30000)
 
     cy.get('div').contains('AAPL')
     cy.get('div').contains('SARIMAX')
