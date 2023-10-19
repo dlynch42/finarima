@@ -205,7 +205,7 @@ const ArimaPage = () => {
                                             <Input 
                                                 className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                                                 disabled={isLoading}
-                                                placeholder="Enter a company's ticker or name"
+                                                placeholder="Enter a company's ticker (e.g. AAPL for Apple, TSLA for Tesla)"
                                                 {...field} 
                                             /> 
                                         </FormControl>
