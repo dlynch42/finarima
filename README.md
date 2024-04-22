@@ -26,7 +26,7 @@ The system architecture follows a structured flow:
 
 * Frontend: Next.js is used for the frontend development, providing a robust and interactive user interface.
 * Backend: AWS services such as Lambda, ECS, API Gateway, and S3 are leveraged for backend infrastructure. It was deployed on Vercel for staging. 
-* Database: MySQL is utilized for data storage, facilitating efficient data retrieval and management.
+* Database: MySQL (Prisma) is utilized for data storage, facilitating efficient data retrieval and management.
 * Languages: Python, TypeScript, and shell scripts are employed for various components of the project, ensuring flexibility and scalability.
 
 ## Usage
