@@ -2,6 +2,8 @@
 
 Finarima is a project developed as the final project for my Software Architecture class. It is a data application designed to return ARIMA (AutoRegressive Integrated Moving Average) models and associated plots for a given security and time period. The application follows a robust architecture incorporating external data collection APIs, data processing, testing suites, and data storage mechanisms.
 
+*Disclaimer: This application is no longer hosted.*
+
 ## Features
 
 * ARIMA Model Generation: Utilizing the ARIMA algorithm, Finarima generates predictive models for the provided security and time period.
